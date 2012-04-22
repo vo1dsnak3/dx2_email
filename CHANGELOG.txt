@@ -1,0 +1,77 @@
+Deus Ex Email Client 2
+
+CHANGELOG
+----------------------------------------------------------------------
+1.11 Beta
+- Fix extra formatting from <html> to &lt;html&gt;
+- Switch to JQuery UI's implementation of draggable window stacks via 'option','stack','selector'
+- Include the previous email body for email replies
+- Include date of the email in small font, below subject
+- Fix login input not changing to circles
+- Slightly improve email window responsiveness when logging in
+- Split the configurations to a separate file away from dx2.js
+
+1.10 Beta
+- Prevent HTML emails overriding body font for client
+- Client now sends multipart mime messages by default
+- Fix CSS sizing issue with the disconnect segment not showing the hardware bars properly
+- Fix checkboxes showing carets instead of normal pointers
+- Change the attachment type display to extension instead of raw type since they can be quite long
+- Implement psuedo-unread emails on POP3 servers based on xml existence
+- Added common internet media types to the download attachment page
+- Fixed subject decoding errors when the email has no subject
+- Implement email synchronization every X-Minutes (defined at options)
+- Fix not being able to download attachment when xml file contains whitespace in filename
+- Fix xml limits not being implemented properly during offline mode
+- Added new option for xml limits default is 0 (unlimited)
+
+1.09 Beta
+- Performance fixes
+- Cross-browser css fixes
+- Completion indicator for emailing messages
+- Fixed parsing emails that have no HTML component and have encoded transfer type
+- Added extra formatting for the above type
+- Stricter attachment checking for offline files
+
+1.08 Beta
+- Fixed incompatible external entities in xml files
+- DX.js code reduction
+- Use localStorage to store svg's to speed up client responsiveness
+
+1.07 Beta
+- Completed sending/replying with simple text email to recipients
+- Fix bug with plain text display
+- Adjustments to the hardware activity svg
+
+1.06 Beta
+- Improved imap connection speed through host->ip conversion
+- Minor speed increase to email processing by using xml's (online-mode)
+- Deleting emails now removes it from the xml directory
+
+1.05 Beta
+- Support for including attachment data in the xml
+- Support for enlarging emails, deleting emails, flagging emails
+
+1.04 BETA
+- Communicates to imap servers that emails have been read through flag settings
+- Added optional limits to offline emails
+- Added an unread email counter
+
+1.03 BETA
+- Some graphical bug fixes for html emails
+
+1.02 BETA
+- Fix decoding quoted printable messages and base64
+- Rewrote getting part number as recursive function
+- Show error info when xmls cannot be found in offline mode
+
+1.01 BETA
+- Create a hardware monitor graphic beside the disconnect button, reveals on login
+- Moved extra scripts, jqueryui, mousewheel and jscrollpane to load on demand
+- Optimize orb animation performance by switching to native CSS3 animations
+- Include Modernizr to help with HTML5 and CSS3 feature support
+- Animate the hardware monitors on the bottom right hand corner
+- Remove pesky orange outlines from inputs and jscrollpanes in Chrome
+
+1.0 BETA
+Initial Release
