@@ -1,4 +1,4 @@
-Deus Ex Email Client 2 - 1.11 BETA
+Deus Ex Email Client 2 - 1.12 BETA
 
 INTRODUCTION
 ----------------------------------------------------------------------

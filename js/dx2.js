@@ -54,6 +54,18 @@ var SOUND = {
 
 $(document).ready(function() {
 
+	// Force Fullscreen Mode
+	var docElm = document.documentElement;
+	if (docElm.requestFullscreen) {
+		docElm.requestFullscreen();
+	}
+	else if (docElm.mozRequestFullScreen) {
+		docElm.mozRequestFullScreen();
+	}
+	else if (docElm.webkitRequestFullScreen) {
+		docElm.webkitRequestFullScreen();
+	}
+
 	if ( config.background ) {
 		/* For some reason IE will override the background(image) css property if it finds a filter gradient,
 		* we need to set filter to 0 if the user defines a custom background image. 
@@ -69,7 +81,7 @@ $(document).ready(function() {
 	}
 
 	// Set overall css, account for variable screen dimensions
-	$('#container').css({width: screen.width, height: window.innerHeight});
+	$('#container').css({width: screen.width, height: screen.height/*window.innerHeight*/});
 	
 	// Save raphael references to the bars in the global reference object for later animation
 	global.hardware_bars = drawHardwareMonitor($('#monitor'), 'svg_hardware');

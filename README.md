@@ -1,4 +1,4 @@
-Deus Ex Email Client 2 - 1.11 BETA
+Deus Ex Email Client 2 - 1.12 BETA
 =========
 
 INTRODUCTION
@@ -14,22 +14,22 @@ to your personal inbox.
 
 REQUIREMENTS
 ----------------------------------------------------------------------
-1) You will need a working webserver, works on apache 2.2, untested on IIS
-2) You will need PHP 5 installed
+1. You will need a working webserver, works on apache 2.2, untested on IIS
+2. You will need PHP 5 installed
 
 	For people having trouble with steps 1 and 2 try QuickPHP: http://www.zachsaw.com/?pg=quickphp_php_tester_debugger
 
-3) A modern browser that supports HTML5 and CSS3
-4) The email client is meant to be displayed full-screen on your browser, press the F11 button
+3. A modern browser that supports HTML5 and CSS3
+4. The email client is meant to be displayed full-screen on your browser, press the F11 button
 
 
 
 INSTALLATION
 ----------------------------------------------------------------------
-1) Put the entire DX2 folder in your server root.
-2) Open the dx2.js in the js folder and enter your email service and your email address.
-3) Open the "define_email.php" and insert your password.
-4) To use custom avatars for other people create a folder under the avatar directory,
+1. Put the entire DX2 folder in your server root.
+2. Open the dx2.js in the js folder and enter your email service and your email address.
+3. Open the "define_email.php" and insert your password.
+4. To use custom avatars for other people create a folder under the avatar directory,
    image must have no spaces only underscores. If you have a saved xml, you can copy the value from the "From" element
    and use that as the image name.
 	eg. Avatar/[Your email address]something@hotmail.com/jenson_adam&lt;something@hotmail.com&gt;.jpg
@@ -40,19 +40,19 @@ SECURITY
 ----------------------------------------------------------------------
 Some overall tips on security issues if you are making this application public on your server
 
-1) If worried about security, enable SSL on your server
-2) For added security, put encrypted or hashed password in a database
-3) Enable password type inputs for login (Make the characters in the entry circles)
+1. If worried about security, enable SSL on your server
+2. For added security, put encrypted or hashed password in a database
+3. Enable password type inputs for login (Make the characters in the entry circles)
 
 
 
 ISSUES
 ----------------------------------------------------------------------
-- Some HTML messages may not render correctly
-- Old browsers may not render the client correctly [see requirements]
-- Not all email services are supported, contact me if you want a service supported (eg. Yahoo)
-- May have problems with viewing foreign characters under different charsets.
-- IE can't handle large amounts of ajax data
+* Some HTML messages may not render correctly
+* Old browsers may not render the client correctly [see requirements]
+* Not all email services are supported, contact me if you want a service supported (eg. Yahoo)
+* May have problems with viewing foreign characters under different charsets.
+* IE can't handle large amounts of ajax data
 
 
 

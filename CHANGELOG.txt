@@ -2,6 +2,10 @@ Deus Ex Email Client 2
 
 CHANGELOG
 ----------------------------------------------------------------------
+1.12 Beta
+- Include a setup page to help the user save multiple account information to a file
+- Support request for fullscreen mode when browsers support it in the future
+
 1.11 Beta
 - Fix extra formatting from <html> to &lt;html&gt;
 - Switch to JQuery UI's implementation of draggable window stacks via 'option','stack','selector'

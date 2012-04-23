@@ -1,0 +1,56 @@
+@font-face {
+	font-family: "DX";
+	src: url("../Square 721 BT.ttf") format('truetype'),
+	url('../square_721_bt-webfont.eot?#iefix') format('embedded-opentype');
+}
+
+* {
+	margin: 0;
+	outline: none;
+}
+
+body {
+	background-color: #1e1e1e;
+	font-family: "DX", Verdana;
+	color: #EFE8BA;
+}
+
+.box {
+	-moz-box-sizing: 	border-box;
+	-ms-box-sizing: 	border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: 		border-box;
+}
+
+a:link {
+	color: #EC9C13;
+}
+
+a:hover {
+	color: #EC9C13;
+}
+
+a:visited {
+	color: #EC9C13;
+}
+
+#global_wrapper {
+	padding: 20px 0 0 20px;
+}
+
+#page_header {
+	font-size: 24px;
+	margin-bottom: 20px;
+}
+
+#page_intro {
+	margin-bottom: 20px;
+}
+
+#page_table_note {
+	margin-bottom: 20px;
+}
+
+.cell-center {
+	text-align: center;
+}
