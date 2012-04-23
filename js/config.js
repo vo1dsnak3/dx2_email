@@ -34,6 +34,6 @@ var config_email = {
 	"xml_limit":		0,						// Set the maximum amount of stored emails to display
 	"enable_avatar":	true,					// Set if you want to use custom avatars for contacts
 	
-	"server": 			"GMAIL",				// Enter your email service [HOTMAIL, GMAIL]
-	"user":				"eternaldamnation4@gmail.com"						// Enter email address
+	"server": 			"",				// Enter your email service [HOTMAIL, GMAIL]
+	"user":				""						// Enter email address
 };
