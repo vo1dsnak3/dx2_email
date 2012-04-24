@@ -543,6 +543,8 @@ function setEmailPageDimensions() {
 	* and create the jsp last
 	*/
 	$E.emailObjs.height($E.emailObjs.height());
+	var x = $('#email_list_actual div.email-l-avatar:first').width();
+	$('#email_list_actual div.email-l-avatar').height(x);
 	$E.list.jScrollPane({hideFocus:true});
 }
 

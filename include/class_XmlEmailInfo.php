@@ -228,7 +228,7 @@
 			$markup = '<div id="'.$this->mid.'" class="email">
 						<div class="email-l-avatar-cont">
 							<div class="email-l-avatar box">
-								<img class="list-avatar" src="'.htmlspecialchars($this->avatar).'" />
+								<img class="list-avatar box" src="'.htmlspecialchars($this->avatar).'" />
 							</div>
 							<div class="abar';
 							
