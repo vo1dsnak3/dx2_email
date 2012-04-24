@@ -6,6 +6,10 @@ CHANGELOG
 - Include a setup page to help the user save multiple account information to a file
 - Rewritten ajax_auth to account for multiple email accounts
 - Support request for fullscreen mode when browsers support it in the future
+- Client can now switch between email accounts on the fly
+- Load local copy jquery if the client is unable to access the CDN
+- Start including minified dx2.js
+- Fix bug when the avatar folder is deleted and the user has enable_avatar set to true
 
 1.11 Beta
 - Fix extra formatting from <html> to &lt;html&gt;

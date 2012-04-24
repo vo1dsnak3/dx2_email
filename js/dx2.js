@@ -25,7 +25,8 @@ var global = {
 	sync_id:     '',
 	hardware_bars: null,
 	flags: new Array(),
-	delId: new Array()
+	delId: new Array(),
+	accountIndex: 0
 };
 
 // Cache all ajax requests by default
@@ -52,11 +53,19 @@ var ACCOUNTS;
 
 // Get a list of accounts
 $.getJSON('ajax_fetchaccounts.php', function(data) {
-	ACCOUNTS = data;
+	if ( !data.error ) {
+		ACCOUNTS = data;
 
-	// Set the first account to be the default
-	config_email.server = ACCOUNTS[0][0][0];
-	config_email.user	= ACCOUNTS[0][0][1];
+		// Set the first account to be the default
+		config_email.server = ACCOUNTS[0][0][0];
+		config_email.user	= ACCOUNTS[0][0][1];
+		
+		if ( config.augment_login ) {
+			DRAW.accountSwitch($('#multiaccount_wrapper'), config_email.server, config_email.user);
+		}
+	} else {
+		window.location = 'setup/index.php';
+	}
 });
 
 /* DOCUMENT READY */
@@ -387,6 +396,10 @@ function setEmailPageDimensions() {
 		global.sync_id = setInterval(refreshMailBox, config.sync_time * 60000);
 	}
 	
+	if ( config.augment_login ) {
+		$('#svg_accounts text:last').show();
+	}
+	
 	$E.initObjects();
 	
 	setArrayFontRatio(new Array($('#mail_header'), 
@@ -652,6 +665,10 @@ var $L = {
 function setLoginPageDimensions() {
 	global.currentPage = 'login';
 	
+	if ( config.augment_login ) {
+		$('#svg_accounts text:last').hide();
+	}
+	
 	$L.initObjects();
 	$L.initCSS();
 	$L.initHandlers();
@@ -802,8 +819,6 @@ function setFontAndCenter(element, parent, ratio) {
 	setVerticalCenter(parent, element);
 }
 
-/*================================================================================================*/
-
 function cleanReplyBox() {
 	$('#reply_sendbtn').html('SEND').removeClass('replybtn-done').addClass('replybtn-send');
 }
@@ -867,6 +882,12 @@ function initEmailBox(self, to, subject) {
 	self.data('init', true);
 }
 
+
+
+/*================================================================================================*/
+
+
+
 function getSize2(element) {
 	var offset = element.offset();
 	
@@ -879,6 +900,66 @@ function getSize2(element) {
 	
 	return size;
 }
+
+var DRAW = {
+	accountSwitch: function(element, server, user) {
+		var s = getSize2(element);
+		var p = Raphael(s.l, s.t, s.w, s.h);
+		var r = s.h / 80;
+		
+		var boxattr = {'fill':'#111','stroke':'none'};
+		var a = p.path('m10,20l8,-6l8,6v8l-8,5l-8,-5z').attr(boxattr);
+		var e = p.path('m10,52l8,-6l8,6v8l-8,5l-8,-5z').attr(boxattr);
+		
+		var textattr = {'text-anchor': 'start', 'font-family': 'DX', 'font-size': 12, 'stroke': 'none', 'fill': '#A2A070'};
+		var b = p.text(38, 23, server).attr(textattr);
+		var c = p.text(38, 55, user).attr(textattr);
+		var h = p.text(126, 23, 'APPLY').attr(textattr).transform('S'+r+','+r+',0,0').hide();
+	
+		var f = p.set().push(a, b).hover(function() {
+			a.attr('fill', '#fcc433');
+		}, function() {
+			a.attr('fill', '#111');
+		});
+		
+		var g = p.set().push(e, c).hover(function() {
+			e.attr('fill', '#fcc433');
+		}, function() {
+			e.attr('fill', '#111');
+		});
+	
+		var d = p.set().push(f, g);
+		d.transform('S'+r+','+r+',0,0')
+		.click(function() {
+			var length = ACCOUNTS[0].length-1;
+			
+			if ( ++global.accountIndex > length ) {
+				global.accountIndex = 0;
+			}
+			
+			config_email.server = ACCOUNTS[0][global.accountIndex][0];
+			config_email.user	= ACCOUNTS[0][global.accountIndex][1];
+			
+			b.attr('text', config_email.server);
+			c.attr('text', config_email.user);
+		});
+		
+		// Switch to another account when user clicks the apply link
+		h.click(function() {
+			$.getJSON('ajax_email.php', config_email, function(data) {
+				global.login_segment.html(data.main);
+				$('#email_list_actual').html(data.list);
+				$('#message p:first').html(data.body);
+				setEmailPageDimensions();
+				
+				SOUND.email_beeper.play();
+			});
+		});
+		
+		// adjust z-index and give the svg an index to be modified later
+		$(a.node).parent().css('z-index', 104).attr('id', 'svg_accounts');
+	}
+};
 
 function drawOrb2(element, color, lsid) {
 	var s = getSize2(element);

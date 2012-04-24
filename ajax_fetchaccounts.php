@@ -17,5 +17,12 @@
 	 */
 
 	include_once 'include/func_openAccXml.php';
-	echo json_encode(openAccXml());
+	
+	$result = openAccXml();
+	
+	if ( $result !== FALSE ) {
+		echo json_encode($result);
+	} else {
+		echo json_encode(array('error'=>'Please run the DX Client setup'));
+	}
 ?>

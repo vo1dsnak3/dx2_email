@@ -86,6 +86,7 @@ $(document).ready(function() {
 		$.getJSON('ajax_createconfig.php', { "accounts": JSON.stringify(data), 'proxy': $('#proxy_row').find('input').val() }, function(result) {
 			if ( !result.error ) {
 				alert(result.result);
+				window.location = '../index.php';
 			} else {
 				alert(result.error);
 			}

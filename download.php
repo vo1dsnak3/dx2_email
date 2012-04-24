@@ -22,7 +22,7 @@
 	
 	$id = str_replace(" ", "+", $id);
 
-	include_once 'include/function_type.php';
+	include_once 'include/func_mimetype.php';
 	
 	$xml_path = 'email/'.$user.'/'.$id.'.xml';
 	if ( file_exists($xml_path) ) {

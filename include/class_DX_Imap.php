@@ -10,7 +10,7 @@
 	 * @author    Alexander Ip <voidsnake@users.sourceforge.net>
 	 * @copyright 2012 Alexander Ip
 	 * @license   http://opensource.org/licenses/MIT MIT
-	 * @version   1.0 Beta
+	 * @version   1.12 Beta
 	 * @link	  https://sourceforge.net/projects/dx2client/
 	 */
 
@@ -72,6 +72,12 @@
 		 */
 		protected function getAvatar($from, $default=DEFAULT_AV) 
 		{
+			if ( !file_exists('avatar') ) 
+			{
+				mkdir('avatar');
+				return $default;
+			}
+		
 			$avatar_path = 'avatar/'.$this->user.'/';
 			if ( !file_exists($avatar_path) ) 
 			{

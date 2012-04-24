@@ -51,25 +51,4 @@
 	}
 	
 	echo ( $result ? 'Access Granted' : 'Access Denied' );
-	
-	/*
-	include_once 'define_email.php';
-	
-	define('PASS', 'pass');
-	define('MAX_PASS', 64);
-	
-	$proxy = ( isset($_GET['proxy']) && $_GET['proxy'] == 'true' ? PROXY_PASSWORD : DX_PASSWORD );
-	
-	$real_password = $proxy;
-	
-	$entry = '';
-	
-	if ( !isset($_GET[PASS]) || $_GET[PASS] > MAX_PASS ) {
-		die('Access Denied');
-	}
-	
-	$entry = $_GET[PASS];
-
-	echo ( $entry == $real_password ? 'Access Granted' : 'Access Denied' );
-	*/
 ?>
