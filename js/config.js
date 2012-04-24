@@ -17,9 +17,9 @@ var config = {
 	/* [LOGIN SCREEN] */
 	"augment_login" : true,						// Set to true to enable extra login features
 	"pass_type"		: false,					// Change the pasword entry to dots 
-	"avatar"		: "", 						// The path to your avatar, to use default set to "" 
+	"avatar"		: "", 		// The path to your avatar, to use default set to "" 
 	"alt_stripe"	: true,						// Use alternate striped background on some terminals 
-	"alt_usrname"	: "",						// Your username that you want to see, default is AJENSON 
+	"alt_usrname"	: "",					// Your username that you want to see, default is AJENSON 
 	"proxy_pass"	: true,						// Set to true to use a different password than your email account password at login screen
 	
 	/* [EMAIL SCREEN] */
@@ -34,6 +34,6 @@ var config_email = {
 	"xml_limit":		0,						// Set the maximum amount of stored emails to display
 	"enable_avatar":	true,					// Set if you want to use custom avatars for contacts
 	
-	"server": 			"",				// Enter your email service [HOTMAIL, GMAIL]
-	"user":				""						// Enter email address
+	"server": 			"",						// DO NOT TOUCH
+	"user":				""						// DO NOT TOUCH
 };

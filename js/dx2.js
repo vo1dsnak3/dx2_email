@@ -48,13 +48,22 @@ var SOUND = {
 	email_beeper: detectAudio('sfx/email_beeper')
 };
 
+var ACCOUNTS;
+
+// Get a list of accounts
+$.getJSON('ajax_fetchaccounts.php', function(data) {
+	ACCOUNTS = data;
+
+	// Set the first account to be the default
+	config_email.server = ACCOUNTS[0][0][0];
+	config_email.user	= ACCOUNTS[0][0][1];
+});
 
 /* DOCUMENT READY */
 /*================================================================================================*/
 
 $(document).ready(function() {
-
-	// Force Fullscreen Mode
+	// Force Fullscreen Mode *BETA*
 	var docElm = document.documentElement;
 	if (docElm.requestFullscreen) {
 		docElm.requestFullscreen();
@@ -573,7 +582,7 @@ var $L = {
 	initHandlers: function() {
 		var loginBtnClick = function(e) {
 			// Start password authentication and get result from server
-			$.get('ajax_auth.php', { 'pass': $L.input.val(), 'proxy': config.proxy_pass }, function(result) {
+			$.get('ajax_auth.php', { 'pass': $L.input.val(), 'proxy': config.proxy_pass, 'address': config_email.user }, function(result) {
 				if ( result == 'Access Granted' ) {
 					SOUND.login_success.play();
 					

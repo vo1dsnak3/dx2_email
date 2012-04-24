@@ -9,14 +9,15 @@
 	 * @author    Alexander Ip <voidsnake@users.sourceforge.net>
 	 * @copyright 2012 Alexander Ip
 	 * @license   http://opensource.org/licenses/MIT MIT
-	 * @version   1.11 Beta
+	 * @version   1.12 Beta
 	 * @link	  https://sourceforge.net/projects/dx2client/
+	 * @link	  https://github.com/vo1dsnak3/dx2_email/
 	 */
 
 	require_once 'include/class_XmlEmailInfo.php';
 	require_once 'include/class_DX_Imap_Online.php';
 	require_once 'include/class_DX_Imap_Offline.php';
-	require_once 'define_email.php';
+	require_once 'include/func_openAccXml.php';
 	 
 	//Options
 	define('OPT_AUGMENT', 	'augment_email');
@@ -36,16 +37,27 @@
 	$enable_avatar  = ( isset($_GET[OPT_AVATAR]) 	&& $_GET[OPT_AVATAR]  == 'true' ? true : false );
 	$limit			= ( isset($_GET[OPT_LIMIT]) ? $_GET[OPT_LIMIT] : 0 );
 	$xml_limit		= ( isset($_GET[OPT_XMLLIM]) ? $_GET[OPT_XMLLIM] : 0 );
+	
+	$infoAcc		= openAccXml();
+	$length 		= count($infoAcc[0]);
+	$pass			= '';
+		
+	for ( $i = 0; $i < $length; ++$i ) {
+		if ( DX_USER == $infoAcc[0][$i][1] ) {
+			$pass = $infoAcc[0][$i][2];
+			break;
+		}
+	}
 
 	/*==========================================================================================*/
 	
 	$list   = '';
-	$ver	= 'DX2 VISUAL FRAMEWORK 1.11';
+	$ver	= 'DX2 VISUAL FRAMEWORK 1.12';
 	$data	= array('From'=>'From', 'To'=>'To', 'Avatar'=>DEFAULT_AV, 'Attach'=>false);
 	
 	try {
 		// Create object depending on whether we are in offline mode
-		$dx_imap = ( !$offline ? new DX_Imap_Online(DX_SERVER, DX_USER, DX_PASSWORD) : new DX_Imap_Offline(DX_USER, $xml_limit) );
+		$dx_imap = ( !$offline ? new DX_Imap_Online(DX_SERVER, DX_USER, $pass) : new DX_Imap_Offline(DX_USER, $xml_limit) );
 		
 		if ( $dx_imap->getEmails($limit) ) {
 			$list = $dx_imap->processEmails($enable_avatar);

@@ -1,8 +1,7 @@
 <?php
 	/**
 	 * ajax_createconfig
-	 * Creates an xml that describes the user's list of email accounts,
-	 * passwords are hashed with md5.
+	 * Creates an xml that describes the user's list of email accounts.
 	 *
 	 * PHP version 5
 	 *
@@ -18,18 +17,24 @@
 
 	$accounts = json_decode($_GET['accounts']);
 	
+	// Default is xml, database storage will be different
+	
 	$xml = new DOMDocument('1.0', 'UTF-8');
 	$xml->formatOutput = true;
 			
 	$xmlroot = $xml->createElement('accounts');
 	$xmlroot = $xml->appendChild($xmlroot);
 	
+	if ( isset($_GET['proxy']) && !empty($_GET['proxy']) ) {
+		$xmlroot->appendChild($xml->createElement('proxy', $_GET['proxy']));
+	}
+	
 	$length = count($accounts);
 	for ( $i = 0; $i < $length; ++$i ) {
 		$xmlAcc = $xmlroot->appendChild($xml->createElement('account'));
 		$xmlAcc->appendChild($xml->createElement('type', $accounts[$i]->type));
 		$xmlAcc->appendChild($xml->createElement('address', $accounts[$i]->addr));
-		$xmlAcc->appendChild($xml->createElement('password', md5($accounts[$i]->ps)));
+		$xmlAcc->appendChild($xml->createElement('password', $accounts[$i]->ps));
 	}
 	
 	$result = $xml->save('../accounts.xml');

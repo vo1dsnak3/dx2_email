@@ -44,6 +44,13 @@
 					<td colspan="4"><a class="new-acc" href="#">Add another email account</a></td>
 				</tr>
 				<tr>
+					<td colspan="5" style="height:20px;"></td>
+				</tr>
+				<tr id="proxy_row">
+					<td colspan="2">Proxy: </td>
+					<td><input type="password" /></td>
+				</tr>
+				<tr>
 					<td colspan="5"><input id="page_submit" type="submit" value="Submit"/></td>
 				</tr>
 			</tbody>

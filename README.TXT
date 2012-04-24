@@ -26,8 +26,8 @@ REQUIREMENTS
 INSTALLATION
 ----------------------------------------------------------------------
 1) Put the entire DX2 folder in your server root.
-2) Open the dx2.js in the js folder and enter your email service and your email address.
-3) Open the "define_email.php" and insert your password.
+2) Point your browser to /setup/index.php and add your email accounts
+3) Further customizations are in /js/config.js
 4) To use custom avatars for other people create a folder under the avatar directory,
    image must have no spaces only underscores. If you have a saved xml, you can copy the value from the "From" element
    and use that as the image name.

@@ -4,6 +4,7 @@ CHANGELOG
 ----------------------------------------------------------------------
 1.12 Beta
 - Include a setup page to help the user save multiple account information to a file
+- Rewritten ajax_auth to account for multiple email accounts
 - Support request for fullscreen mode when browsers support it in the future
 
 1.11 Beta
