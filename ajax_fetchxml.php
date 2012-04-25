@@ -10,8 +10,9 @@
 	 * @author    Alexander Ip <voidsnake@users.sourceforge.net>
 	 * @copyright 2012 Alexander Ip
 	 * @license   http://opensource.org/licenses/MIT MIT
-	 * @version   1.11 Beta
+	 * @version   1.13 Beta
 	 * @link	  https://sourceforge.net/projects/dx2client/
+	 * @link	  https://github.com/vo1dsnak3/dx2_email/
 	 */
 
 	define('XML_ID', 'xmlname');
@@ -28,7 +29,18 @@
 			$to   = $email->to;
 			$body = sprintf("%s", $email->body);
 			$subj = sprintf("%s", $email->subject);
-			$av	  = htmlspecialchars(sprintf("%s", $email->avatar));
+			$av	  = 'avatar/anon.png';
+			
+			preg_match('/.*\s&lt;(.+)&gt;/i', $from, $match);
+			if ( isset($match[1]) ) {
+				$pictures = glob('avatar/'.$match[1].'.*');
+				
+				// Always use the first picture found
+				if ( isset($pictures[0]) ) {
+					$av = $pictures[0];
+				}
+			}
+			
 			$date = sprintf("%s", $email->date);
 			
 			// Use extension for display instead of raw type

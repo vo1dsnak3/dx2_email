@@ -5,7 +5,7 @@
 	</div>
 	<div id="login_namebar">
 		<div id="login_avatar_container">
-			<img id="login_avatar" src="gfx/anon.png" />
+			<img id="login_avatar" src="avatar/anon.png" />
 		</div>
 		<div id="namebar_container">
 			<div id="namebar_names">

@@ -2,6 +2,9 @@ Deus Ex Email Client 2
 
 CHANGELOG
 ----------------------------------------------------------------------
+1.13 Beta
+- Simplified the avatar system
+
 1.12 Beta
 - Include a setup page to help the user save multiple account information to a file
 - Rewritten ajax_auth to account for multiple email accounts

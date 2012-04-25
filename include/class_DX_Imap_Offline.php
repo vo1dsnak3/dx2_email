@@ -14,6 +14,7 @@
 	 * @license   http://opensource.org/licenses/MIT MIT
 	 * @version   1.10 Beta
 	 * @link	  https://sourceforge.net/projects/dx2client/
+	 * @link	  https://github.com/vo1dsnak3/dx2_email/
 	 */
 
 	require_once 'include/class_DX_Imap.php';

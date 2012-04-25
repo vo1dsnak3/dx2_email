@@ -10,14 +10,15 @@
 	 * @author    Alexander Ip <voidsnake@users.sourceforge.net>
 	 * @copyright 2012 Alexander Ip
 	 * @license   http://opensource.org/licenses/MIT MIT
-	 * @version   1.12 Beta
+	 * @version   1.13 Beta
 	 * @link	  https://sourceforge.net/projects/dx2client/
+	 * @link	  https://github.com/vo1dsnak3/dx2_email/
 	 */
 
 	require_once 'class_Attachment.php';
 	require_once 'class_XmlEmailInfo.php';
 
-	define('DEFAULT_AV', 'gfx/anon.png');
+	define('DEFAULT_AV', 'avatar/anon.png');
 	
 	abstract class DX_Imap
 	{
@@ -77,19 +78,25 @@
 				mkdir('avatar');
 				return $default;
 			}
-		
-			$avatar_path = 'avatar/'.$this->user.'/';
-			if ( !file_exists($avatar_path) ) 
+			
+			preg_match('/.*\s<(.+)>/i', $from, $match);
+			
+			// Check the avatar array first before matching using glob
+			if ( isset($avatar_list[$match[1]]) ) 
+				return $avatar_list[$match[1]];
+			
+			// If not found in array, search avatar dir and push to array
+			if ( isset($match[1]) ) 
 			{
-				mkdir($avatar_path);
-				return $default;
+				$pictures = glob('avatar/'.$match[1].'.*');
+				
+				// Always use the first picture found
+				if ( isset($pictures[0]) ) {
+					$avatar_list[$match[1]] = $pictures[0];
+					return $pictures[0];
+				}
 			}
-			
-			$from   = htmlspecialchars(str_replace(" ", "_", $from));
-			$target = $avatar_path.$from.'.jpg';
-			if ( file_exists($target) )
-				return $target;
-			
+
 			return $default;
 		}
 		
@@ -108,6 +115,13 @@
 		 * @var array
 		 */
 		protected $initial_data;
+		
+		/**
+		 * storage of avatars
+		 *
+		 * @var array
+		 */
+		private $avatar_list;
 	}
 
 ?>

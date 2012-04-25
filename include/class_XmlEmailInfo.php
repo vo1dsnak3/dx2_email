@@ -11,8 +11,9 @@
 	 * @author    Alexander Ip <voidsnake@users.sourceforge.net>
 	 * @copyright 2012 Alexander Ip
 	 * @license   http://opensource.org/licenses/MIT MIT
-	 * @version   1.05 Beta
+	 * @version   1.13 Beta
 	 * @link	  https://sourceforge.net/projects/dx2client/
+	 * @link	  https://github.com/vo1dsnak3/dx2_email/
 	 */
 
 	require_once 'class_Attachment.php';
@@ -187,7 +188,6 @@
 			$xmlroot->appendChild($this->xml->createElement('from', 	$this->from));
 			$xmlroot->appendChild($this->xml->createElement('to', 		$this->to));
 			$xmlroot->appendChild($this->xml->createElement('subject', 	$this->subject));
-			$xmlroot->appendChild($this->xml->createElement('avatar', 	$this->avatar));
 			$xmlroot->appendChild($this->xml->createElement('body', 	$this->body));
 
 			$x_att = $xmlroot->appendChild($this->xml->createElement('attachment'));
@@ -228,7 +228,7 @@
 			$markup = '<div id="'.$this->mid.'" class="email">
 						<div class="email-l-avatar-cont">
 							<div class="email-l-avatar box">
-								<img class="list-avatar box" src="'.htmlspecialchars($this->avatar).'" />
+								<img class="list-avatar box" src="'.$this->avatar.'" />
 							</div>
 							<div class="abar';
 							
@@ -397,7 +397,7 @@
 		 *
 		 * @var string
 		 */
-		private $avatar 	= 'gfx/anon.png';
+		private $avatar;
 		
 		/**
 		 * subject of the email
