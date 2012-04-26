@@ -948,13 +948,37 @@ var DRAW = {
 		
 		// Switch to another account when user clicks the apply link
 		h.click(function() {
-			$.getJSON('ajax_email.php', config_email, function(data) {
-				global.login_segment.html(data.main);
-				$('#email_list_actual').html(data.list);
-				$('#message p:first').html(data.body);
-				setEmailPageDimensions();
+			$.ajax({
+				async: 		true,
+				url: 		'ajax_email.php',
+				dataType: 	'json',
+				data: 		config_email,
 				
-				SOUND.email_beeper.play();
+				beforeSend: function(xhr) {
+					$L.progress.show();
+
+					var w       = $L.progress.width();
+					var end		= w << 1;
+					var svg     = $('#progress_bar');
+					
+					var anim 	= function() {
+						svg.css({'left': -w}).animate({'left':'+='+end}, 1000, anim);
+					};
+
+					anim();
+				},
+				
+				success: function(data) {
+					$L.progress.fadeOut(function() {
+						// Load the main content in separate parts to speed things up
+						global.login_segment.html(data.main);
+						$('#email_list_actual').html(data.list);
+						$('#message p:first').html(data.body);
+						setEmailPageDimensions();
+						
+						SOUND.email_beeper.play();
+					});
+				}
 			});
 		});
 		

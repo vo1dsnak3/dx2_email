@@ -29,8 +29,7 @@
 		$xmlroot->appendChild($xml->createElement('proxy', $_GET['proxy']));
 	}
 	
-	if ( $accounts ) {
-		$length = count($accounts);
+	if ( $accounts && ($length = count($accounts)) != 0 ) {
 		for ( $i = 0; $i < $length; ++$i ) {
 			$xmlAcc = $xmlroot->appendChild($xml->createElement('account'));
 			$xmlAcc->appendChild($xml->createElement('type', $accounts[$i]->type));
@@ -38,18 +37,7 @@
 			$xmlAcc->appendChild($xml->createElement('password', $accounts[$i]->ps));
 		}
 	} else {
-		// QuickPHP currently does not implement json_decode properly as of version 1.14.0,
-		// resort to manually parsing the json string.
-		preg_match_all('/\\"type\\":\\"(HOTMAIL|GMAIL)\\",\\"addr\\":\\"([a-zA-Z0-9_\-]+@[a-zA-Z0-9_\-]+\.(com|ca))\\",\\"ps\\":\\"([a-zA-Z0-9]+)\\"\}/i', $_GET['accounts'], $matches);
-
-		if ( ($length = count($matches[0])) != 0 ) {
-			for ( $i = 0; $i < $length; ++$i ) {
-				$xmlAcc = $xmlroot->appendChild($xml->createElement('account'));
-				$xmlAcc->appendChild($xml->createElement('type', $matches[1][$i]->type));
-				$xmlAcc->appendChild($xml->createElement('address', $matches[2][$i]->addr));
-				$xmlAcc->appendChild($xml->createElement('password', $matches[4][$i]->ps));
-			}
-		}
+		die(json_encode(array('error'=>'Failed to decode ajax params')));
 	}
 	
 	$result = $xml->save('../accounts.xml');

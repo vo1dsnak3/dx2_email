@@ -4,6 +4,8 @@ CHANGELOG
 ----------------------------------------------------------------------
 1.13 Beta
 - Simplified the avatar system
+- Include more specific instructions on using QuickPHP with DX2
+- Show the progress bar animation when switching accounts on the fly
 
 1.12 Beta
 - Include a setup page to help the user save multiple account information to a file

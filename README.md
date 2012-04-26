@@ -32,6 +32,19 @@ INSTALLATION
 
 
 
+INSTALLATION W/ QuickPHP
+----------------------------------------------------------------------
+1. Download and install PHP 5 and extract it to a folder
+2. Download and extract the QuickPHP BareBones version into your PHP folder
+3. Rename php.ini-production to php.ini
+4. Edit the php.ini and replace "extension=php_imap.dll" to "extension=ext/php_imap.dll"
+5. You must also replace "extension=php_mbstring.dll" to "extension=ext/php_mbstring.dll"
+6. Don't forget to remove the the semi-colon before each line on numbers 4 and 5
+7. Follow the same installation rules as above
+8. Launch QuickPHP and use 127.0.0.1 and port 80 substitute execution time to 0 and start
+
+
+
 SECURITY
 ----------------------------------------------------------------------
 Some overall tips on security issues if you are making this application public on your server
