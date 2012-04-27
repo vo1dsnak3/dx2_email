@@ -7,6 +7,7 @@ CHANGELOG
 - Include more specific instructions on using QuickPHP with DX2
 - Show the progress bar animation when switching accounts on the fly
 - Emails now support adding attachments via ajax (Very Experimental, may fail)
+- Email attachment removal from new message creation window
 
 1.12 Beta
 - Include a setup page to help the user save multiple account information to a file

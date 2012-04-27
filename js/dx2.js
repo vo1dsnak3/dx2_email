@@ -424,7 +424,7 @@ function setEmailPageDimensions() {
 
 	setVerticalCenter($('#email_full_container'), $('#email_list_container'));
 	makeSquare($('#content_avatar_cont'));
-	$('#reply_box').css({width: screen.width*0.5, height:screen.height*0.5});
+	//$('#reply_box').css({width: screen.width*0.5, height:screen.height*0.5});
 
 	$E.list_counter.html( '1/' + $E.totalEmails );	// Update email counter
 	$E.processFirstEmail();							// Add select class to the very first email
@@ -821,8 +821,11 @@ function setFontAndCenter(element, parent, ratio) {
 	setVerticalCenter(parent, element);
 }
 
+/*================================================================================================*/
+
 function cleanReplyBox() {
 	$('#reply_sendbtn').html('SEND').removeClass('replybtn-done').addClass('replybtn-send');
+	$('#file_upload_displayer').html('');
 }
 
 function initEmailBox(self, to, subject) {
@@ -893,6 +896,11 @@ function initEmailBox(self, to, subject) {
 		});
 	});
 	
+	$('#file_upload_btn').click(function(e) {
+		e.preventDefault();
+		$('#fattachment').click();
+	});
+	
 	//init file attachment functionality
 	initFileAttachment();
 	
@@ -918,7 +926,7 @@ function initFileAttachment() {
 				var name = this.files[i].name;
 			
 				formdata.append('attachments[]', this.files[i]);
-				$disp.append('<a href="#" class="link-attach">'+name+'</a>,');
+				$disp.append('<a href="#" title="click to remove attachment" class="link-attach">'+name+'</a>, ');
 				
 				if ( store.indexOf(name) == -1 ) {
 					store.push(name);
@@ -926,7 +934,6 @@ function initFileAttachment() {
 			}
 			
 			$('#reply_box').data('attachment', store);
-			console.log($('#reply_box').data('attachment'));
 
 			$.ajax({
 				url: 'ajax_fileattachment.php',
@@ -1180,7 +1187,7 @@ function drawEmailIcon(element, lsid) {
 			if ( $('#reply_box:visible').length == 0 ) {
 				cleanReplyBox();
 				
-				$('#reply_box').show('scale', 'fast', function() {
+				$('#reply_box').show(0, function() {
 					if ( !$(this).data('init') ) 
 						initEmailBox($(this), $('#reply_to'), $('#reply_subject'));
 				});
@@ -1716,7 +1723,7 @@ function drawControlBar(container) {
 			// Reset button css
 			cleanReplyBox();
 			
-			$('#reply_box').show('scale', 'fast', function() {	
+			$('#reply_box').show(0, function() {	
 				// Set the recipient
 				var replyto = $('#reply_to');
 				var from = $('#from_text').html();

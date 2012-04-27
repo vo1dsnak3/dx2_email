@@ -867,10 +867,38 @@ a:visited {
 	padding-left: 16px;
 }	
 
+#file_upload_form {
+	display:none;
+}
+
+#file_upload_btn {
+	background-color: transparent;
+    border: 1px solid #EC9C13;
+    border-radius: 4px 4px 4px 4px;
+    color: #EC9C13;
+    font-family: inherit;
+    height: 2em;
+}
+
 #file_upload_displayer {
 	height: 20px;
     margin: 10px auto 0;
     width: 95%;
+}
+
+.link-attach:link {
+	color: #EC9C13;
+	text-decoration: none;
+}
+
+.link-attach:hover {
+	color: #EC9C13;
+	text-decoration: underline;
+}
+
+.link-attach:visited {
+	color: #EC9C13;
+	text-decoration: none;
 }
 
 #reply_send {
