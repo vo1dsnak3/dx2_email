@@ -9,13 +9,14 @@
 	 * @author    Alexander Ip <voidsnake@users.sourceforge.net>
 	 * @copyright 2012 Alexander Ip
 	 * @license   http://opensource.org/licenses/MIT MIT
-	 * @version   1.10 Beta
+	 * @version   1.13 Beta
 	 * @link	  https://sourceforge.net/projects/dx2client/
+	 * @link	  https://github.com/vo1dsnak3/dx2_email/
 	 */
 
 	require_once 'include/Mail.php';
 	require_once 'include/mime.php';
-	require_once 'define_email.php';
+	require_once 'include/func_openAccXml.php';
 	
 	$userInfo  	= ( isset($_GET['userinfo']) ? json_decode($_GET['userinfo']) : false );
 	$content	= ( isset($_GET['content']) ? json_decode($_GET['content']) : false );
@@ -45,9 +46,24 @@
 		}
 	}
 	
+	// Extract password
+	$p 				= openAccXml(false);
+	$l 				= count($p);
+	$dx_password	= false;
+	for ( $i = 0; $i < $l; ++$i ) {
+		if ( $p[$i][1] == $userInfo->user ) {
+			$dx_password = $p[$i][2];
+			break;
+		}
+	}
+
+	if ( !$dx_password ) {
+		die (json_encode(array('error'=>'Failed to retrieve password')));
+	}
+	
 	$params 			= getHostParams($userInfo->server);
 	$params["username"] = $userInfo->user;
-	$params["password"] = DX_PASSWORD;
+	$params["password"] = $dx_password;
 	$params["auth"] 	= true;
 	
 	$mailObj = &Mail::factory('smtp', $params);
@@ -74,7 +90,25 @@
 	// Do mime conversion on content
 	$mime->setTXTBody($body);
 	$mime->setHTMLBody($htmlbody);
+	
 	// Set attachments here if any
+	if ( file_exists('attachments/') && isset($_GET['attachments']) ) {
+		$a = json_decode($_GET['attachments']);
+		$a_length = count($a);
+		
+		for ( $i = 0; $i < $a_length; ++$i ) {
+		
+			$a_path = 'attachments/'.$a[$i];
+
+			if ( file_exists($a_path) ) {
+				$a_result = $mime->addAttachment($a_path);
+			
+				if ( $a_result !== TRUE ) {
+					die(json_encode(array('error'=>$a_result->getMessage())));
+				}
+			}
+		}
+	}
 	
 	// Get mime compatible content
 	$mimeBody = $mime->get();

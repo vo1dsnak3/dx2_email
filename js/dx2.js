@@ -83,7 +83,7 @@ $(document).ready(function() {
 	else if (docElm.webkitRequestFullScreen) {
 		docElm.webkitRequestFullScreen();
 	}
-
+	
 	if ( config.background ) {
 		/* For some reason IE will override the background(image) css property if it finds a filter gradient,
 		* we need to set filter to 0 if the user defines a custom background image. 
@@ -827,7 +827,7 @@ function cleanReplyBox() {
 
 function initEmailBox(self, to, subject) {
 	var textarea = $('#reply_body_text');
-	
+
 	setFontRatio(to, to, 0.5);
 	setFontRatio(subject, subject, 0.5);
 	
@@ -836,6 +836,14 @@ function initEmailBox(self, to, subject) {
 	setFontAndCenter($('#reply_footer_text'), $('#reply_footer'), 0.25);
 
 	var closeWindow = function() {
+		// Clear file attachment references and delete them
+		var attachments = $('#reply_box').data('attachment');
+		
+		if ( attachments ) {
+			$('#reply_box').data('attachment', '');
+			$.get( 'ajax_removeAttachment.php', { "attachments": JSON.stringify(attachments) } );
+		}
+	
 		self.hide();
 		to.val('');
 		subject.val('');
@@ -870,18 +878,70 @@ function initEmailBox(self, to, subject) {
 			contentpayload.body += api.getContentPane().html();
 		}
 		
-		$.get('ajax_sendmail.php', { "userinfo": JSON.stringify(config_email), 
-									 "content": JSON.stringify(contentpayload) }, function(data) {
+		var attachments = $('#reply_box').data('attachment');
+		attachments = ( attachments ? attachments : false );
+		
+		$.getJSON('ajax_sendmail.php', { "userinfo": JSON.stringify(config_email), 
+									 "content": JSON.stringify(contentpayload),
+									 "attachments": JSON.stringify(attachments)}, function(data) {
 			if ( data.result ) {
 				$('#reply_sendbtn').html('DONE').removeClass('replybtn-send').addClass('replybtn-done');
 				setTimeout(closeWindow, 1500);
 			} else {
 				alert(data.error);
 			}
-		}, 'json');
+		});
 	});
 	
+	//init file attachment functionality
+	initFileAttachment();
+	
 	self.data('init', true);
+}
+
+function initFileAttachment() {
+	// User should consider upgrading the browser if formdata is not supported
+	if ( window.FormData ) {
+		var formdata = new FormData();
+		
+		var inputAttachment = document.getElementById('fattachment');
+		inputAttachment.addEventListener('change', function(e) {
+			var $disp	= $('#file_upload_displayer');
+			var length 	= this.files.length;
+			
+			var store = $('#reply_box').data('attachment');
+			if ( !store ) {
+				store = new Array();
+			}
+			
+			for ( var i = 0; i < length; ++i ) {
+				var name = this.files[i].name;
+			
+				formdata.append('attachments[]', this.files[i]);
+				$disp.append('<a href="#" class="link-attach">'+name+'</a>,');
+				
+				if ( store.indexOf(name) == -1 ) {
+					store.push(name);
+				}
+			}
+			
+			$('#reply_box').data('attachment', store);
+			console.log($('#reply_box').data('attachment'));
+
+			$.ajax({
+				url: 'ajax_fileattachment.php',
+				type: 'post',
+				data: formdata,
+				processData: false,
+				contentType: false,
+				success: function(data) {
+					alert(data);
+				}
+			});
+		});
+	} else {
+		alert('Your browser does not support FormData, consider upgrading your browser');
+	}
 }
 
 

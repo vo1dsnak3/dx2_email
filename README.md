@@ -29,6 +29,7 @@ INSTALLATION
 2. Point your browser to /setup/index.php and add your email accounts
 3. Further customizations are in /js/config.js
 4. To use custom avatars simply put the picture into the avatar folder and rename it to your friend's email address
+5. To be able to send file attachments in emails, you must enable file uploads in your php.ini
 
 
 
