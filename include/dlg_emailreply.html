@@ -1,45 +1,32 @@
-<div id="reply_box" class="windowshadow drag">
-	<div id="reply_titlebar" class="top-gradient">
-		<div id="reply_orb_c">
-		
-		</div>
+<div id="reply_box" class="drag">
+	<div id="rtorow" class="row-header">
+		<div id="rtohead" class="input-header"><p class="vcenter">To:</p></div>
+		<input required autocomplete="on" type="text" id="reply_to" class="row-input" />
+	</div>
+	<div id="rsubjrow" class="row-header">
+		<div id="rsubjhead" class="input-header"><p class="vcenter">Subject:</p></div>
+		<input type="text" id="reply_subject" class="row-input"/>
+	</div>
+	<div id="recipient_avatar">
+		<img src="avatar/anon.png" />
 	</div>
 	<div id="reply_content">
-		<div id="reply_header">
-			<div id="reply_send">
-				<button id="reply_sendbtn" class="replybtn-send">SEND</button>
-			</div>
-			<div id="reply_input">
-				<div id="rtorow" class="reply-input-box">
-					<div id="rtohead" class="input-header">To: </div>
-					<div class="reply-input-c">
-						<input required autocomplete="on" type="text" id="reply_to" />
-					</div>
-				</div>
-				<div id="rsubjrow" class="reply-input-box">
-					<div id="rsubjhead" class="input-header">Subject: </div>
-					<div class="reply-input-c">
-						<input required autocomplete="on" type="text" id="reply_subject" />
-					</div>
-				</div>
-			</div>
-		</div>
 		<div id="reply_body">
-			<textarea autofocus id="reply_body_text"></textarea>
+			<textarea id="reply_body_text" placeholder="Enter your email message here"></textarea>
 		</div>
-		<div id="file_upload_wrapper">
-			<button id="file_upload_btn">Attach File</button>
-			<form id="file_upload_form" method="post" enctype="multipart/form-data" action="ajax_fileupload.php">
-				<input type="file" name="attachment" id="fattachment" multiple />
-			</form>
-		</div>
-		<div id="file_upload_displayer">
+		<div id="file_upload_displayer" class="box">
 			
 		</div>
 	</div>
-	<div id="reply_footer">
-		<div id="reply_footer_text">
-			DX VISUAL FRAMEWORK 1.13
+	<div id="file_upload_wrapper">
+		<button id="reply_sendbtn" class="newmsgbtn">Send</button>
+		<button id="file_upload_btn" class="newmsgbtn">Attach File</button>
+		<button id="reply_close_btn" class="newmsgbtn">Close</button>
+		<div id="newmsg_status">
+			
 		</div>
+		<form id="file_upload_form" method="post" enctype="multipart/form-data" action="ajax_fileupload.php">
+			<input type="file" name="attachment" id="fattachment" multiple />
+		</form>
 	</div>
 </div>

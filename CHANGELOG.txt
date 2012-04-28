@@ -8,6 +8,7 @@ CHANGELOG
 - Show the progress bar animation when switching accounts on the fly
 - Emails now support adding attachments via ajax (Very Experimental, may fail)
 - Email attachment removal from new message creation window
+- Entire redesign of the new email message window
 
 1.12 Beta
 - Include a setup page to help the user save multiple account information to a file

@@ -437,7 +437,7 @@ function setEmailPageDimensions() {
 		// Set draggable windows
 		$('#email_list_container').draggable({handle: '#email_list_titlebar'});
 		$reader_container.draggable({handle: '#email_reader_titlebar'});
-		$('#reply_box').draggable({handle: '#reply_titlebar'});
+		$('#reply_box').draggable();
 		
 		// Set drag z-index manager
 		$('.drag').draggable('option', 'stack', '.drag');
@@ -823,8 +823,10 @@ function setFontAndCenter(element, parent, ratio) {
 
 /*================================================================================================*/
 
-function cleanReplyBox() {
-	$('#reply_sendbtn').html('SEND').removeClass('replybtn-done').addClass('replybtn-send');
+function cleanReplyBox(avatarPath) {
+	// reset avatar
+	$('#recipient_avatar img').attr('src', avatarPath);
+	$('#newmsg_status').html('');
 	$('#file_upload_displayer').html('');
 }
 
@@ -833,10 +835,8 @@ function initEmailBox(self, to, subject) {
 
 	setFontRatio(to, to, 0.5);
 	setFontRatio(subject, subject, 0.5);
-	
-	setFontAndCenter($('#rtohead'), $('#rtorow'), 0.5);
-	setFontAndCenter($('#rsubjhead'), $('#rsubjrow'), 0.5);
-	setFontAndCenter($('#reply_footer_text'), $('#reply_footer'), 0.25);
+	setFontRatio($('#rtohead'), $('#rtorow'), 0.5);
+	setFontRatio($('#rsubjhead'), $('#rsubjrow'), 0.5);
 
 	var closeWindow = function() {
 		// Clear file attachment references and delete them
@@ -852,8 +852,17 @@ function initEmailBox(self, to, subject) {
 		subject.val('');
 		textarea.val('');
 	};
+
+	DRAW.customMessage($('#reply_box'), closeWindow);
+
+	// Avatar event for the to input form
+	$('#reply_to').blur(function() {
+		$.get('ajax_findAvatar.php', {'recipient': $(this).val()}, function(avatarSrc) {
+			$('#recipient_avatar img').attr('src', avatarSrc);
+		});
+	});
 	
-	drawOrb2(makeSquare($('#reply_orb_c')), 'rgba(0,0,0,0)', 'svg_reply').element.click(closeWindow);
+	$('#reply_close_btn').click(closeWindow);
 	
 	$('#reply_sendbtn').click(function() {
 		var contentpayload = {
@@ -888,10 +897,12 @@ function initEmailBox(self, to, subject) {
 									 "content": JSON.stringify(contentpayload),
 									 "attachments": JSON.stringify(attachments)}, function(data) {
 			if ( data.result ) {
-				$('#reply_sendbtn').html('DONE').removeClass('replybtn-send').addClass('replybtn-done');
+				//$('#reply_sendbtn').html('DONE').removeClass('replybtn-send').addClass('replybtn-done');
+				$('#newmsg_status').html('Status: Email Successfully Sent');
 				setTimeout(closeWindow, 1500);
 			} else {
-				alert(data.error);
+				//alert(data.error);
+				$('#newmsg_status').html('Status: '+data.error);
 			}
 		});
 	});
@@ -926,7 +937,7 @@ function initFileAttachment() {
 				var name = this.files[i].name;
 			
 				formdata.append('attachments[]', this.files[i]);
-				$disp.append('<a href="#" title="click to remove attachment" class="link-attach">'+name+'</a>, ');
+				//$disp.append('<a href="#" class="link-attach">'+name+'</a>, ');
 				
 				if ( store.indexOf(name) == -1 ) {
 					store.push(name);
@@ -938,16 +949,27 @@ function initFileAttachment() {
 			$.ajax({
 				url: 'ajax_fileattachment.php',
 				type: 'post',
+				dataType: 'json',
 				data: formdata,
 				processData: false,
 				contentType: false,
 				success: function(data) {
-					alert(data);
+					if ( data.result ) {
+						for ( var i = 0; i < length; ++i ) {
+							$('#file_upload_displayer').append('<a href="#" class="link-attach">'+store[i]+'</a>, ');
+						}
+						
+						$('#newmsg_status').html('Status: '+data.result);
+					} else {
+						//console.log(data.error);
+						$('#newmsg_status').html('Status: '+data.error);
+					}
 				}
 			});
 		});
 	} else {
-		alert('Your browser does not support FormData, consider upgrading your browser');
+		$('#file_upload_btn').hide();
+		$('#newmsg_status').html('Status: Your browser does not support FormData, consider upgrading your browser');
 	}
 }
 
@@ -1051,6 +1073,28 @@ var DRAW = {
 		
 		// adjust z-index and give the svg an index to be modified later
 		$(a.node).parent().css('z-index', 104).attr('id', 'svg_accounts');
+	},
+	
+	customMessage: function(element, closeEvent) {
+		var s = getSize2(element);
+		var p = Raphael(s.l, s.t, s.w, s.h);
+		var rh = s.h / 639;
+		var rw = s.w / 1152;
+		
+		var a = p.path('M1,80l80,-79h1070v558l-80,79H1z')
+		.attr({fill:'rgba(0,0,0,0.9)', stroke:'#EC9C13'});
+		var b = p.path('m0,10l10,-10l10,10l10,-10l10,10l-10,10l10,10l-10,10l-10,-10l-10,10l-10,-10l10,-10z')
+		.attr({fill: 'rgba(255,0,0,0.5)', stroke:'none', title: 'Close Message'})
+		.hover(function() {
+			this.attr('fill', 'rgba(255,0,0,1)');
+		}, function() {
+			this.attr('fill', 'rgba(255,0,0,0.5)');
+		})
+		.click(closeEvent);
+		
+		p.set().push(a,b).transform('S'+rw+','+rh+',0,0');
+		
+		element.append($(a.node).parent().css({left:0,top:0,'z-index':-1}));
 	}
 };
 
@@ -1185,7 +1229,7 @@ function drawEmailIcon(element, lsid) {
 		.click(
 		function() {
 			if ( $('#reply_box:visible').length == 0 ) {
-				cleanReplyBox();
+				cleanReplyBox('avatar/anon.png');
 				
 				$('#reply_box').show(0, function() {
 					if ( !$(this).data('init') ) 
@@ -1720,14 +1764,17 @@ function drawControlBar(container) {
 	})
 	.click(function() {
 		if ( $('#reply_box:visible').length == 0 ) {
-			// Reset button css
-			cleanReplyBox();
+			// Set the recipient
+			var replyto = $('#reply_to');
+			var from = $('#from_text').html();
+			from = from.substring(from.indexOf('&lt;')+4, from.length-4);
 			
+			$.get('ajax_findAvatar.php', {'recipient': from}, function(avatarSrc) {
+				cleanReplyBox(avatarSrc);
+			});
+
 			$('#reply_box').show(0, function() {	
-				// Set the recipient
-				var replyto = $('#reply_to');
-				var from = $('#from_text').html();
-				from = from.substring(from.indexOf('&lt;')+4, from.length-4);
+
 				replyto.val(from);
 				
 				// Set the subject

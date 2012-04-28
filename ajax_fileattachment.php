@@ -22,6 +22,10 @@
 		mkdir($attachment_path);
 	}
 
+	if ( !isset($_FILES) ) {
+		die(json_encode(array('error'=>'Could not attach file(s)')));
+	}
+
 	$len = count($_FILES['attachments']['name']);
 	
 	for ( $i = 0; $i < $len; ++$i ) {
@@ -29,6 +33,6 @@
 		$temp_name = $_FILES['attachments']['tmp_name'][$i];
 		move_uploaded_file($temp_name, $attachment_path.$real_name);
 	}
-
-	echo 'File Attached';
+	
+	echo json_encode(array('result'=>'File Attached'));
 ?>
