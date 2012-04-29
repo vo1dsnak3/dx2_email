@@ -11,7 +11,7 @@
 	 * @author    Alexander Ip <voidsnake@users.sourceforge.net>
 	 * @copyright 2012 Alexander Ip
 	 * @license   http://opensource.org/licenses/MIT MIT
-	 * @version   1.10 Beta
+	 * @version   1.13 Beta
 	 * @link	  https://sourceforge.net/projects/dx2client/
 	 * @link	  https://github.com/vo1dsnak3/dx2_email/
 	 */
@@ -132,6 +132,10 @@
 		 */
 		public function processEmails($enable_avatar=true)
 		{
+			// Adaptive xml clean algorithm
+			$xmlCache = glob($this->xml_path.'*.xml');
+			$xmlCache = array_combine($xmlCache, $xmlCache);
+		
 			$total = count($this->emails) - 1;
 			
 			// Process the most recent message independently to display to the user
@@ -139,7 +143,12 @@
 			
 			// Found the message in xml cache use file first
 			if ( file_exists($xmlfile) )
+			{
 				$xmlInfo = $this->xmlToObject($xmlfile, $this->emails[$total]->seen);
+				
+				if ( isset($xmlCache[$xmlfile]) )
+					unset($xmlCache[$xmlfile]);
+			}
 			else
 			{
 				// Could not find file, decode and construct manually
@@ -160,7 +169,12 @@
 				$xmlfile  = $this->xml_path.substr($this->emails[$i]->message_id, 1, -1).'.xml';
 				
 				if ( file_exists($xmlfile) )
+				{
 					$xmlInfo = $this->xmlToObject($xmlfile, $this->emails[$i]->seen);
+					
+					if ( isset($xmlCache[$xmlfile]) )
+						unset($xmlCache[$xmlfile]);
+				}
 				else
 				{
 					$xmlInfo = $this->overviewToObject($i, $enable_avatar);
@@ -174,6 +188,11 @@
 				$list 	.= $xmlInfo->generateList();
 			}
 			
+			// Finish cleaning part
+			// Loop through the array and clean up the remaining xml's
+			foreach ( $xmlCache as $key => $value ) 
+				unlink($key);
+
 			return $list;
 		}
 		

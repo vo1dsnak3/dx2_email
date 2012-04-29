@@ -457,12 +457,12 @@ function setEmailPageDimensions() {
 			var cache 	= $self.data('msg');
 			if ( !cache ) {	// Check to see if the newly selected email has cache data 
 				// DO AJAX to xml folder then store in cache 
-				$.get('ajax_fetchxml.php', { xmlname : $self.attr('id'), user: config_email.user}, function(result) {
+				$.getJSON('ajax_fetchxml.php', { xmlname : $self.attr('id'), user: config_email.user}, function(result) {
 					$E.from_text.html(result.from);
 					$E.to_text.html(result.to[0]);
 					
 					// Take into account custom avatars
-					var correctAV = ( !config_email.enable_avatar ? 'gfx/anon.png' : result.avatar );
+					var correctAV = ( !config_email.enable_avatar ? 'avatar/anon.png' : result.avatar );
 					$E.msg_avatar.attr('src', correctAV);
 					
 					// Deal with attachments
@@ -489,7 +489,7 @@ function setEmailPageDimensions() {
 					
 					// Reinit the scrollbars for new content
 					api.reinitialise();
-				}, 'json');
+				});
 			} else {
 				// Found previous data, redisplay it to the user instead of making an ajax call
 				$E.from_text.html(cache.from);
@@ -861,6 +861,15 @@ function initEmailBox(self, to, subject) {
 			$('#recipient_avatar img').attr('src', avatarSrc);
 		});
 	});
+	
+	
+	if ( !config_email.enable_encryption ) {
+		$('#gpg2_encrypt_btn').remove();
+	} else {
+		$('#gpg2_encrypt_btn').click(function() {
+			// get pub key
+		});
+	}
 	
 	$('#reply_close_btn').click(closeWindow);
 	

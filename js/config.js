@@ -34,6 +34,8 @@ var config_email = {
 	"xml_limit":		0,						// Set the maximum amount of stored emails to display
 	"enable_avatar":	true,					// Set if you want to use custom avatars for contacts
 	
+	"enable_encryption": false,					// Advanced Feature: You must have a keyring already setup in gpg2
+	
 	"server": 			"",						// DO NOT TOUCH
 	"user":				""						// DO NOT TOUCH
 };

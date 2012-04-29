@@ -9,6 +9,7 @@ CHANGELOG
 - Emails now support adding attachments via ajax (Very Experimental, may fail)
 - Email attachment removal from new message creation window
 - Entire redesign of the new email message window
+- Adaptive xml cache cleaning on the fly (see class_DX_Imap_Online::processEmails)
 
 1.12 Beta
 - Include a setup page to help the user save multiple account information to a file
