@@ -23,7 +23,7 @@
 	abstract class DX_Imap
 	{
 		abstract public function getEmails($limit);
-		abstract public function processEmails($enable_avatar);
+		abstract public function processEmails();
 		
 		/**
 		 * return initial data to be displayed to the user
@@ -88,7 +88,7 @@
 			// If not found in array, search avatar dir and push to array
 			if ( isset($match[1]) ) 
 			{
-				$pictures = glob('avatar/'.$match[1].'.*');
+				$pictures = glob('avatar/'.$match[1].'.*', GLOB_NOSORT);
 				
 				// Always use the first picture found
 				if ( isset($pictures[0]) ) {

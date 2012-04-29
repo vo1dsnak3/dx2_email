@@ -25,7 +25,6 @@
 	define('OPT_UNREAD', 	'unread_only');
 	define('OPT_LIMIT', 	'limit');
 	define('OPT_XMLLIM',	'xml_limit');
-	define('OPT_AVATAR', 	'enable_avatar');
 	define('OPT_SERVER', 	'server');
 	define('OPT_USER', 		'user');
 	
@@ -34,7 +33,6 @@
 	
 	$augment		= ( isset($_GET[OPT_AUGMENT]) 	&& $_GET[OPT_AUGMENT] == 'true' ? true : false );
 	$offline		= ( isset($_GET[OPT_OFFLINE]) 	&& $_GET[OPT_OFFLINE] == 'true' ? true : false );
-	$enable_avatar  = ( isset($_GET[OPT_AVATAR]) 	&& $_GET[OPT_AVATAR]  == 'true' ? true : false );
 	$limit			= ( isset($_GET[OPT_LIMIT]) ? $_GET[OPT_LIMIT] : 0 );
 	$xml_limit		= ( isset($_GET[OPT_XMLLIM]) ? $_GET[OPT_XMLLIM] : 0 );
 	
@@ -60,7 +58,7 @@
 		$dx_imap = ( !$offline ? new DX_Imap_Online(DX_SERVER, DX_USER, $pass) : new DX_Imap_Offline(DX_USER, $xml_limit) );
 		
 		if ( $dx_imap->getEmails($limit) ) {
-			$list = $dx_imap->processEmails($enable_avatar);
+			$list = $dx_imap->processEmails();
 			$data = $dx_imap->getFirstData();
 		} 
 	} catch (Exception $e) {
@@ -72,8 +70,6 @@
 	if ( preg_match('/(\<|&lt;)(html|span|table)(\>|&gt;)(&#13;)?/i', $data['Body']) == 0 ) {
 		$data['Body'] = nl2br($data['Body']);
 	}
-	
-//<?php echo $list; 
 
 	$attach_html = '';
 	if ( $augment ) {

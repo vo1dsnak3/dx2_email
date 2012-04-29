@@ -12,7 +12,7 @@
 	 * @author    Alexander Ip <voidsnake@users.sourceforge.net>
 	 * @copyright 2012 Alexander Ip
 	 * @license   http://opensource.org/licenses/MIT MIT
-	 * @version   1.10 Beta
+	 * @version   1.13 Beta
 	 * @link	  https://sourceforge.net/projects/dx2client/
 	 * @link	  https://github.com/vo1dsnak3/dx2_email/
 	 */
@@ -88,7 +88,7 @@
 		 *
 		 * @return string 	A fully generated list of emails, sorted by date newest
 		 */
-		public function processEmails($enable_avatar)
+		public function processEmails()
 		{
 			$list = '';
 		
@@ -103,9 +103,6 @@
 				// Start processing xml
 				foreach($this->file_list as $key => $value) 
 				{
-					if ( !$enable_avatar )
-						$value->setAvatar('gfx/anon.png');
-						
 					$list .= $value->generateList();
 					
 					// Conform to limit if any

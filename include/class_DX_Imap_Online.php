@@ -92,6 +92,13 @@
 			return true;
 		}
 		
+		/**
+		 * Do a lite update of the email list when the client is refreshed.
+		 *
+		 * @param boolean $enable_avatar Whether to enable custom avatars
+		 *
+		 * @return string markup needed on the left hand side of the client
+		 */
 		public function processRefresh($enable_avatar=true) 
 		{
 			$total = count($this->emails) - 1;
@@ -101,7 +108,7 @@
 			for ( $i = $total; $i >= 0; --$i )
 			{
 				$xmlfile  = $this->xml_path.substr($this->emails[$i]->message_id, 1, -1).'.xml';
-				//var_dump($this->emails[$i]->message_id);
+
 				// XML exists which means that the email from the server is not recent since last update
 				if ( file_exists($xmlfile) ) 
 					break;
@@ -130,35 +137,16 @@
 		 *
 		 * @return string markup needed on the left hand side of the client
 		 */
-		public function processEmails($enable_avatar=true)
+		public function processEmails()
 		{
 			// Adaptive xml clean algorithm
-			$xmlCache = glob($this->xml_path.'*.xml');
+			$xmlCache = glob($this->xml_path.'*.xml', GLOB_NOSORT);
 			$xmlCache = array_combine($xmlCache, $xmlCache);
 		
 			$total = count($this->emails) - 1;
 			
 			// Process the most recent message independently to display to the user
-			$xmlfile = $this->xml_path.substr($this->emails[$total]->message_id, 1, -1).'.xml';
-			
-			// Found the message in xml cache use file first
-			if ( file_exists($xmlfile) )
-			{
-				$xmlInfo = $this->xmlToObject($xmlfile, $this->emails[$total]->seen);
-				
-				if ( isset($xmlCache[$xmlfile]) )
-					unset($xmlCache[$xmlfile]);
-			}
-			else
-			{
-				// Could not find file, decode and construct manually
-				$xmlInfo = $this->overviewToObject($total, $enable_avatar);
-
-				// Save to xml dir
-				$xmlInfo->createXml();
-				if ( !$xmlInfo->saveXml($xmlfile) ) 
-					throw new Exception('createXml not called previously or cannot save xml');
-			}
+			$xmlInfo = $this->checkXmlCache($total, $xmlCache);
 
 			$this->initial_data = $xmlInfo->getValueArray();
 			$list 			    = $xmlInfo->generateList();
@@ -166,25 +154,7 @@
 			// Use a for loop instead of foreach to avoid limit and counter checks
 			for ( $i = $total - 1; $i >= 0; --$i )
 			{
-				$xmlfile  = $this->xml_path.substr($this->emails[$i]->message_id, 1, -1).'.xml';
-				
-				if ( file_exists($xmlfile) )
-				{
-					$xmlInfo = $this->xmlToObject($xmlfile, $this->emails[$i]->seen);
-					
-					if ( isset($xmlCache[$xmlfile]) )
-						unset($xmlCache[$xmlfile]);
-				}
-				else
-				{
-					$xmlInfo = $this->overviewToObject($i, $enable_avatar);
-					
-					// If xml file of the email does not exist create an xml
-					$xmlInfo->createXml();
-					if ( !$xmlInfo->saveXml($xmlfile) )
-						throw new Exception('createXml not called previously or cannot save xml');
-				}
-
+				$xmlInfo = $this->checkXmlCache($i, $xmlCache);
 				$list 	.= $xmlInfo->generateList();
 			}
 			
@@ -277,6 +247,42 @@
 		}
 		
 		/*================================================================================================*/
+		
+		/**
+		 * Code to check for an existing email in the cache and use that instead. If the email
+		 * is not cached then the client will attempt to parse the email manually.
+		 *
+		 * @param int $emailIndex	Index to a particular email overview in object's email array
+		 * @param array $xmlCache	A reference to an array of email cache objects
+		 *
+		 * @return object An object that represents the email
+		 */
+		private function checkXmlCache($emailIndex, &$xmlCache) 
+		{
+			// Process the most recent message independently to display to the user
+			$xmlfile = $this->xml_path.substr($this->emails[$emailIndex]->message_id, 1, -1).'.xml';
+			
+			// Found the message in xml cache use file first
+			if ( file_exists($xmlfile) )
+			{
+				$xmlInfo = $this->xmlToObject($xmlfile, $this->emails[$emailIndex]->seen);
+				
+				if ( isset($xmlCache[$xmlfile]) )
+					unset($xmlCache[$xmlfile]);
+			}
+			else
+			{
+				// Could not find file, decode and construct manually
+				$xmlInfo = $this->overviewToObject($emailIndex);
+
+				// Save to xml dir
+				$xmlInfo->createXml();
+				if ( !$xmlInfo->saveXml($xmlfile) ) 
+					throw new Exception('createXml not called previously or cannot save xml');
+			}
+			
+			return $xmlInfo;
+		}
 		
 		/**
 		 * returns the correct string needed to open the imap stream to the
@@ -414,9 +420,9 @@
 		 *
 		 * @return object A XmlEmailInfo object that contains email information
 		 */
-		private function overviewToObject($overview_index, $enable)
+		private function overviewToObject($overview_index)
 		{
-			$apath 	  = ($enable ? $this->getAvatar($this->emails[$overview_index]->from) : DEFAULT_AV);
+			$apath 	  = $this->getAvatar($this->emails[$overview_index]->from);
 			$attach	  = null;
 			$msgno    = $this->emails[$overview_index]->msgno;
 			$struct	  = imap_fetchstructure($this->inbox, $msgno);

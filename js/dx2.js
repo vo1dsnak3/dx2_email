@@ -175,6 +175,11 @@ function doLoad() {
 					global.login_segment.html(data.main);
 					$('#email_list_actual').html(data.list);
 					$('#message p:first').html(data.body);
+					
+					if ( !config_email.enable_avatar ) {
+						$('#content_avatar, #email_list_actual img.list-avatar').attr('src', 'avatar/anon.png');
+					}
+					
 					setEmailPageDimensions();
 					
 					SOUND.email_beeper.play();

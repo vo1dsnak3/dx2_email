@@ -10,6 +10,8 @@ CHANGELOG
 - Email attachment removal from new message creation window
 - Entire redesign of the new email message window
 - Adaptive xml cache cleaning on the fly (see class_DX_Imap_Online::processEmails)
+- Improve speed of glob searches
+- Javascript will process avatars when the option is disabled instead of the server
 
 1.12 Beta
 - Include a setup page to help the user save multiple account information to a file
