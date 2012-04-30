@@ -52,18 +52,17 @@
 		include 'include/dlg_emailreply.html';
 	?>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
 	<script>
-		// Use local copy if unable to access the CDN
-		if ( !jQuery ) {
-			$.getScript('js/jquery-1.7.2.min.js');
-		}
+	if ( typeof jQuery == 'undefined' ) {
+		document.write(unescape("%3Cscript src='js/jquery-1.7.2.min.js'%3E%3C/script%3E"));
+	}
 	</script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
 	<script src="js/jquery.mousewheel.js"></script>
 	<script src="js/mwheelIntent.js"></script>
 	<script src="js/jquery.jscrollpane.min.js"></script>
 	<script src="js/raphael-min.js"></script>
 	<script src="js/config.js"></script>
-	<script src="js/dx2.min.js"></script>
+	<script src="js/dx2.js"></script>
 </body>
 </html>
