@@ -19,7 +19,7 @@
 /* GLOBALS */
 /*================================================================================================*/
 
-var global = {
+var GLOBAL = {
 	login_segment: $('#login_segment'),
 	currentPage: 'login',
 	sync_id:     '',
@@ -27,6 +27,21 @@ var global = {
 	flags: new Array(),
 	delId: new Array(),
 	accountIndex: 0
+};
+
+var AJAX = {
+	authenticate:	'ajax_auth.php',
+	email: 			'ajax_email.php',
+	getXml:			'ajax_fetchxml.php',
+	refresh: 		'ajax_refresh.php',
+	_delete: 		'ajax_deletexml.php',
+	sendEmail:		'ajax_sendmail.php',
+	
+	fetchAccounts: 	'ajax_fetchaccounts.php',
+	attachFile:		'ajax_fileattachment.php',
+	deleteAttachment: 'ajax_removeAttachment.php',
+	setImap: 		'ajax_setimapflag.php',
+	getAvatar:		'ajax_findAvatar.php'
 };
 
 // Cache all ajax requests by default
@@ -52,7 +67,7 @@ var SOUND = {
 var ACCOUNTS;
 
 // Get a list of accounts
-$.getJSON('ajax_fetchaccounts.php', function(data) {
+$.getJSON(AJAX.fetchAccounts, function(data) {
 	if ( !data.error ) {
 		ACCOUNTS = data;
 
@@ -101,8 +116,8 @@ $(document).ready(function() {
 	// Set overall css, account for variable screen dimensions
 	$('#container').css({width: screen.width, height: screen.height/*window.innerHeight*/});
 	
-	// Save raphael references to the bars in the global reference object for later animation
-	global.hardware_bars = drawHardwareMonitor($('#monitor'), 'svg_hardware');
+	// Save raphael references to the bars in the GLOBAL reference object for later animation
+	GLOBAL.hardware_bars = drawHardwareMonitor($('#monitor'), 'svg_hardware');
 	
 	// hide the monitors after it gets drawn otherwise raphael won't know positioning info when hidden
 	$('#hardware_activity').css('position', 'absolute').hide();
@@ -111,26 +126,26 @@ $(document).ready(function() {
 	$disconnect_button.click(function(e) {
 		e.preventDefault();
 		
-		if ( global.currentPage == 'email' ) {
+		if ( GLOBAL.currentPage == 'email' ) {
 			$('#hardware_activity').hide();
 			
 			//POP3 servers will never set the unread flag, only send off the flags if we are in online mode
-			if ( global.flags.length && !config_email.offline_mode ) {				
-				$.getJSON('ajax_setimapflag.php', {"imapflag":JSON.stringify(global.flags), 
+			if ( GLOBAL.flags.length && !config_email.offline_mode ) {				
+				$.getJSON(AJAX.setImap, {"imapflag":JSON.stringify(GLOBAL.flags), 
 											   "userinfo":JSON.stringify(config_email),
-											   "dArray":JSON.stringify(global.delId)}, function(data) {
+											   "dArray":JSON.stringify(GLOBAL.delId)}, function(data) {
 					// Clear the flag and delete buffer
-					global.flags = new Array();
-					global.delId = new Array();
+					GLOBAL.flags = new Array();
+					GLOBAL.delId = new Array();
 				});
 			}
 			
-			global.login_segment.load('ajax_login.php', setLoginPageDimensions);
+			GLOBAL.login_segment.load('ajax_login.php', setLoginPageDimensions);
 		}
 		
 		// Remove synchronization on disconnect
 		if ( config.enable_sync ) {
-			clearTimeout(global.sync_id);
+			clearTimeout(GLOBAL.sync_id);
 		}
 	}).css('font-size', $disconnect_button.height() * 0.513);
 	
@@ -151,7 +166,7 @@ function doLoad() {
 		*/
 		$.ajax({
 			async: 		true,
-			url: 		'ajax_email.php',
+			url: 		AJAX.email,
 			dataType: 	'json',
 			data: 		config_email,
 			
@@ -172,7 +187,7 @@ function doLoad() {
 			success: function(data) {
 				$L.progress.fadeOut(function() {
 					// Load the main content in separate parts to speed things up
-					global.login_segment.html(data.main);
+					GLOBAL.login_segment.html(data.main);
 					$('#email_list_actual').html(data.list);
 					$('#message p:first').html(data.body);
 					
@@ -202,7 +217,7 @@ function doLoad() {
 
 // This function is used along with the 'enable_sync' option
 function refreshMailBox() {
-	$.getJSON('ajax_refresh.php', {"imapflag":JSON.stringify(global.flags), "userinfo":JSON.stringify(config_email), "dArray":JSON.stringify(global.delId)}, function(data) {
+	$.getJSON(AJAX.refresh, {"imapflag":JSON.stringify(GLOBAL.flags), "userinfo":JSON.stringify(config_email), "dArray":JSON.stringify(GLOBAL.delId)}, function(data) {
 		//console.log(data.listdata);
 		if ( data.listdata != '' ) {
 			// Get the content from an already initialized content pane
@@ -232,8 +247,8 @@ function refreshMailBox() {
 			api.reinitialise();
 		}
 		
-		global.flags = new Array();
-		global.delId = new Array();
+		GLOBAL.flags = new Array();
+		GLOBAL.delId = new Array();
 	});
 }
 
@@ -294,7 +309,7 @@ var $E = {
 		}).find('div.email-sl-bar');
 
 		if ( firstUnread.length ) {
-			global.flags.push({"number": this.totalEmails, "flag": "\\Seen"});
+			GLOBAL.flags.push({"number": this.totalEmails, "flag": "\\Seen"});
 			firstUnread.removeClass('email-sl-bar');
 		}
 	},
@@ -306,13 +321,13 @@ var $E = {
 		var curIndex		= $currentEmail.index();
 		var curID			= $currentEmail.attr('id');
 		
-		global.flags.push({"number": $E.totalEmails-curIndex, "flag": "\\Deleted"});
-		global.delId.push(curID);
+		GLOBAL.flags.push({"number": $E.totalEmails-curIndex, "flag": "\\Deleted"});
+		GLOBAL.delId.push(curID);
 
 		if ( config_email.offline_mode ) {
 			var answer = confirm('Delete Email Permanently?');
 			if ( answer )
-				$.get('ajax_deletexml.php', { "user" : config_email.user, "xmlName": curID });
+				$.get(AJAX._delete, { "user" : config_email.user, "xmlName": curID });
 			else
 				return;
 		}
@@ -382,7 +397,7 @@ var $E = {
 		$('#hardware_activity').show();
 
 		if ( config.hardware_anim ) {
-			global.hardware_bars.animate();
+			GLOBAL.hardware_bars.animate();
 		}
 			
 		$container = makeSquare($('#unread_counter_container'));
@@ -394,11 +409,11 @@ var $E = {
 }
 
 function setEmailPageDimensions() {
-	global.currentPage = 'email';
+	GLOBAL.currentPage = 'email';
 
 	// Do not sync if the client is in offline mode
 	if ( config.enable_sync && !config_email.offline_mode ) {
-		global.sync_id = setInterval(refreshMailBox, config.sync_time * 60000);
+		GLOBAL.sync_id = setInterval(refreshMailBox, config.sync_time * 60000);
 	}
 	
 	if ( config.augment_login ) {
@@ -462,7 +477,7 @@ function setEmailPageDimensions() {
 			var cache 	= $self.data('msg');
 			if ( !cache ) {	// Check to see if the newly selected email has cache data 
 				// DO AJAX to xml folder then store in cache 
-				$.getJSON('ajax_fetchxml.php', { xmlname : $self.attr('id'), user: config_email.user}, function(result) {
+				$.getJSON(AJAX.getXml, { xmlname : $self.attr('id'), user: config_email.user}, function(result) {
 					$E.from_text.html(result.from);
 					$E.to_text.html(result.to[0]);
 					
@@ -602,7 +617,7 @@ var $L = {
 	initHandlers: function() {
 		var loginBtnClick = function(e) {
 			// Start password authentication and get result from server
-			$.get('ajax_auth.php', { 'pass': $L.input.val(), 'proxy': config.proxy_pass, 'address': config_email.user }, function(result) {
+			$.get(AJAX.authenticate, { 'pass': $L.input.val(), 'proxy': config.proxy_pass, 'address': config_email.user }, function(result) {
 				if ( result == 'Access Granted' ) {
 					SOUND.login_success.play();
 					
@@ -670,7 +685,7 @@ var $L = {
 };
 
 function setLoginPageDimensions() {
-	global.currentPage = 'login';
+	GLOBAL.currentPage = 'login';
 	
 	if ( config.augment_login ) {
 		$('#svg_accounts text:last').hide();
@@ -745,7 +760,7 @@ function initConfigBox() {
 		
 		// Reload the login page with the new config values
 		$('svg').remove();
-		global.login_segment.load('ajax_login.php', setLoginPageDimensions);
+		GLOBAL.login_segment.load('ajax_login.php', setLoginPageDimensions);
 	});
 }
 
@@ -849,7 +864,7 @@ function initEmailBox(self, to, subject) {
 		
 		if ( attachments ) {
 			$('#reply_box').data('attachment', '');
-			$.get( 'ajax_removeAttachment.php', { "attachments": JSON.stringify(attachments) } );
+			$.get( AJAX.deleteAttachment, { "attachments": JSON.stringify(attachments) } );
 		}
 	
 		self.hide();
@@ -862,7 +877,7 @@ function initEmailBox(self, to, subject) {
 
 	// Avatar event for the to input form
 	$('#reply_to').blur(function() {
-		$.get('ajax_findAvatar.php', {'recipient': $(this).val()}, function(avatarSrc) {
+		$.get(AJAX.getAvatar, {'recipient': $(this).val()}, function(avatarSrc) {
 			$('#recipient_avatar img').attr('src', avatarSrc);
 		});
 	});
@@ -907,7 +922,7 @@ function initEmailBox(self, to, subject) {
 		var attachments = $('#reply_box').data('attachment');
 		attachments = ( attachments ? attachments : false );
 		
-		$.getJSON('ajax_sendmail.php', { "userinfo": JSON.stringify(config_email), 
+		$.getJSON(AJAX.sendEmail, { "userinfo": JSON.stringify(config_email), 
 									 "content": JSON.stringify(contentpayload),
 									 "attachments": JSON.stringify(attachments)}, function(data) {
 			if ( data.result ) {
@@ -961,7 +976,7 @@ function initFileAttachment() {
 			$('#reply_box').data('attachment', store);
 
 			$.ajax({
-				url: 'ajax_fileattachment.php',
+				url: AJAX.attachFile,
 				type: 'post',
 				dataType: 'json',
 				data: formdata,
@@ -1019,41 +1034,42 @@ var DRAW = {
 		var textattr = {'text-anchor': 'start', 'font-family': 'DX', 'font-size': 12, 'stroke': 'none', 'fill': '#A2A070'};
 		var b = p.text(38, 23, server).attr(textattr);
 		var c = p.text(38, 55, user).attr(textattr);
-		var h = p.text(126, 23, 'APPLY').attr(textattr).transform('S'+r+','+r+',0,0').hide();
-	
-		var f = p.set().push(a, b).hover(function() {
-			a.attr('fill', '#fcc433');
-		}, function() {
-			a.attr('fill', '#111');
-		});
 		
-		var g = p.set().push(e, c).hover(function() {
-			e.attr('fill', '#fcc433');
-		}, function() {
-			e.attr('fill', '#111');
-		});
-	
-		var d = p.set().push(f, g);
-		d.transform('S'+r+','+r+',0,0')
-		.click(function() {
-			var length = ACCOUNTS[0].length-1;
+		var mHov = {
+			enter: '#fcc433',
+			leave: '#111',
 			
-			if ( ++global.accountIndex > length ) {
-				global.accountIndex = 0;
+			hov: function(a, b) {
+				return function() {
+					a.attr('fill', b);
+				};
+			}
+		};
+	
+		var f = p.set().push(a, b).hover(mHov.hov(a, mHov.enter), mHov.hov(a, mHov.leave));
+		var g = p.set().push(e, c).hover(mHov.hov(e, mHov.enter), mHov.hov(e, mHov.leave));
+		
+		var d = p.set().push(f, g)
+		.transform('S'+r+','+r+',0,0')
+		.click(function() {
+			if ( ++GLOBAL.accountIndex > ACCOUNTS[0].length-1 ) {
+				GLOBAL.accountIndex = 0;
 			}
 			
-			config_email.server = ACCOUNTS[0][global.accountIndex][0];
-			config_email.user	= ACCOUNTS[0][global.accountIndex][1];
+			config_email.server = ACCOUNTS[0][GLOBAL.accountIndex][0];
+			config_email.user	= ACCOUNTS[0][GLOBAL.accountIndex][1];
 			
 			b.attr('text', config_email.server);
 			c.attr('text', config_email.user);
 		});
 		
 		// Switch to another account when user clicks the apply link
-		h.click(function() {
+		var h = p.text(126, 23, 'APPLY').attr(textattr).transform('S'+r+','+r+',0,0')
+		.hide()
+		.click(function() {
 			$.ajax({
 				async: 		true,
-				url: 		'ajax_email.php',
+				url: 		AJAX.email,
 				dataType: 	'json',
 				data: 		config_email,
 				
@@ -1074,7 +1090,7 @@ var DRAW = {
 				success: function(data) {
 					$L.progress.fadeOut(function() {
 						// Load the main content in separate parts to speed things up
-						global.login_segment.html(data.main);
+						GLOBAL.login_segment.html(data.main);
 						$('#email_list_actual').html(data.list);
 						$('#message p:first').html(data.body);
 						setEmailPageDimensions();
@@ -1516,8 +1532,8 @@ function drawUnreadCounter(container, unreadNumber, lsid) {
 				$read_bar.removeClass('email-sl-bar');
 				
 				// Append object to array consisting of email number and flag
-				global.flags.push( {"number": total_emails-$self.index(), "flag": "\\Seen"} );
-				//console.log(global.flags);
+				GLOBAL.flags.push( {"number": total_emails-$self.index(), "flag": "\\Seen"} );
+				//console.log(GLOBAL.flags);
 				// Make adjustment to the unread orb if necessary
 				var newNum = parseInt(this.text.attr('text')) - 1;
 				
@@ -1653,33 +1669,6 @@ function drawHardwareMonitor(container, lsid) {
 		localStorage.setItem(lsid, JSON.stringify(object));
 	}
 	
-	//var a = n[0].getBBox(false);
-	//n[0].attr('x', (a.width / 2));
-	
-	//var b = n[1].getBBox(false);
-	//n[1].attr('x', b.width / 2);
-	
-	/*
-	var fontSize	= s.h * 0.175;
-	var fontX 		= s.w * 0.5;
-	var fontY 		= fontSize * 0.5;
-	var at3   		= {'font-family': 'DX', 'font-size': fontSize, fill: '#A2A070' };
-	var cpuTxt  	= paper.text(fontX, fontY, "PROCESSOR ACTIVITY").attr(at3);
-	var netTxt 		= paper.text(s.w * 0.425, (s.h * 0.56) + fontSize, "NETWORK ACTIVITY").attr(at3);
-	
-	var barheight 	= s.h * 0.182;
-	var bar1Y		= s.h * 0.236;
-	var bar1atr		= {fill: '#fcc433', stroke: 'none'};
-	var bar2atr		= {fill: '#262626', stroke: '#262626', 'stroke-width': 1};
-	
-	var bar1 		= paper.rect(0, bar1Y, s.w, barheight).attr(bar1atr);
-	var bar1_1 		= paper.rect(0, bar1Y, s.w * 0.577, barheight).attr(bar2atr);
-	
-	var bar2Y	= s.h*0.873;
-	var bar2 	= paper.rect(0, bar2Y, s.w * 0.538, barheight).attr(bar1atr);
-	var bar2_2 	= paper.rect(0, bar2Y, s.w * 0.308, barheight).attr(bar2atr);
-	*/
-	
 	var p = $(n[2].node).parent().attr('id', 'cpusvg').css({top: 0,left: 0});
 	container.append(p);
 	
@@ -1783,7 +1772,7 @@ function drawControlBar(container) {
 			var from = $('#from_text').html();
 			from = from.substring(from.indexOf('&lt;')+4, from.length-4);
 			
-			$.get('ajax_findAvatar.php', {'recipient': from}, function(avatarSrc) {
+			$.get(AJAX.getAvatar, {'recipient': from}, function(avatarSrc) {
 				cleanReplyBox(avatarSrc);
 			});
 
@@ -1843,19 +1832,20 @@ function drawControlBar(container) {
 		var curIndex		= $current.index();
 		var newIndex		= totalEmails-curIndex;
 		
-		var len = global.flags.length;
+		var len = GLOBAL.flags.length;
 		var found = false;
 		if ( len ) {
 			for ( var i = 0; i < len; ++i ) {
-				if ( global.flags[i].number == newIndex && global.flags[i].flag == "\\Flagged" ) {
-					global.flags.splice(i, 1);
+				if ( GLOBAL.flags[i].number == newIndex && GLOBAL.flags[i].flag == "\\Flagged" ) {
+					GLOBAL.flags.splice(i, 1);
 					found = true;
 				}
 			}
 		}
 		
-		if ( !found )
-			global.flags.push({"number": newIndex, "flag": "\\Flagged"});
+		if ( !found ) {
+			GLOBAL.flags.push({"number": newIndex, "flag": "\\Flagged"});
+		}
 		
 		var color = (flagged.attr('fill') == '#ec9c13' ? '#1a1c1b' : '#ec9c13');
 		flagged.attr('fill', color);
