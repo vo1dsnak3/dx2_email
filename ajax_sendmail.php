@@ -9,13 +9,12 @@
 	 * @author    Alexander Ip <voidsnake@users.sourceforge.net>
 	 * @copyright 2012 Alexander Ip
 	 * @license   http://opensource.org/licenses/MIT MIT
-	 * @version   1.13 Beta
+	 * @version   1.14 Beta
 	 * @link	  https://sourceforge.net/projects/dx2client/
 	 * @link	  https://github.com/vo1dsnak3/dx2_email/
 	 */
-
-	require_once 'include/Mail.php';
-	require_once 'include/mime.php';
+	 
+	require_once 'include/class_Email.php';
 	require_once 'include/func_openAccXml.php';
 	
 	$userInfo  	= ( isset($_GET['userinfo']) ? json_decode($_GET['userinfo']) : false );
@@ -61,63 +60,24 @@
 		die (json_encode(array('error'=>'Failed to retrieve password')));
 	}
 	
-	$params 			= getHostParams($userInfo->server);
-	$params["username"] = $userInfo->user;
-	$params["password"] = $dx_password;
-	$params["auth"] 	= true;
+	$param = getHostParams($userInfo->server);
 	
-	$mailObj = &Mail::factory('smtp', $params);
-	
-	$recipients = $content->to;
-
-	$headers['From']    = $userInfo->user;
-	$headers['To']      = $content->to;
-	$headers['Subject'] = $content->subject;
-
-	// Setup MIME params
-	$mimeparams['eol'] 				= "\n";
-    $mimeparams['text_encoding'] 	= "8bit";
-    $mimeparams['html_encoding'] 	= "8bit";
-    $mimeparams['head_charset']		= "UTF-8";
-    $mimeparams['text_charset']		= "UTF-8";
-    $mimeparams['html_charset']		= "UTF-8";
-	$mime 							= new Mail_mime($mimeparams);
-	
-	// Setup the content
-	$body 		= $content->body;
-	$htmlbody	= "<html><head><style>body.dxmsg{font-size:11px;font-family:'Segoe UI', Verdana, Arial;}</style></head><body class='dxmsg'>".$body."</body></html>";
-	
-	// Do mime conversion on content
-	$mime->setTXTBody($body);
-	$mime->setHTMLBody($htmlbody);
-	
-	// Set attachments here if any
+	$attachments = false;
 	if ( file_exists('attachments/') && isset($_GET['attachments']) ) {
 		$a = json_decode($_GET['attachments']);
 		$a_length = count($a);
 		
 		for ( $i = 0; $i < $a_length; ++$i ) {
-		
 			$a_path = 'attachments/'.$a[$i];
-
-			if ( file_exists($a_path) ) {
-				$a_result = $mime->addAttachment($a_path);
-			
-				if ( $a_result !== TRUE ) {
-					die(json_encode(array('error'=>$a_result->getMessage())));
-				}
-			}
+			$attachments[] = $a_path;
 		}
 	}
 	
-	// Get mime compatible content
-	$mimeBody = $mime->get();
-	$mimeHead = $mime->headers($headers);
-	
-	$result = $mailObj->send($recipients, $mimeHead, $mimeBody);
+	$smtp = new Email($param['host'], $param['port'], $userInfo->user, $dx_password, true);
+	$result = $smtp->SendEmail($content->to, $content->subject, $content->body, false, $attachments);
 	
 	if ( $result !== TRUE ) {
-		die(json_encode(array('error'=>$result->getMessage())));
+		echo json_encode(array('error'=>$smtp->getLastError()));
 	} else {
 		echo json_encode(array('result'=>'success'));
 	}
