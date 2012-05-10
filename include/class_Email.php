@@ -10,7 +10,7 @@
 	 * @author    Alexander Ip <voidsnake@users.sourceforge.net>
 	 * @copyright 2012 Alexander Ip
 	 * @license   http://opensource.org/licenses/MIT MIT
-	 * @version   1.13 Beta
+	 * @version   1.14 Beta
 	 * @link	  https://sourceforge.net/projects/dx2client/
 	 * @link	  https://github.com/vo1dsnak3/dx2_email/
 	 */
@@ -122,6 +122,32 @@
 		
 		/*================================================================================================*/
 		
+		public static function get_SMTP_host($host)
+		{
+			switch ( $host ) 
+			{
+				case 'HOTMAIL':
+				$params["host"] = 'smtp.live.com';
+				$params["port"] = 587;
+				return $params;
+				
+				case 'GMAIL':
+				$params["host"] = 'smtp.gmail.com';
+				$params["port"] = 465;
+				return $params;
+				
+				case 'YAHOO':
+				$params["host"] = 'smtp.mail.yahoo.com';
+				$params["port"] = 995;
+				return $params;
+				
+				default:
+				return false;
+			}
+		}
+		
+		/*================================================================================================*/
+		
 		/**
 		 * Attaches files to the mime email whenever a file is found at the correct path
 		 * as denoted by the input array.
@@ -130,9 +156,7 @@
 		 */
 		private function setAttachments($attachments)
 		{
-			$length = count($attachments);
-			
-			for ( $i = 0; $i < $length; ++$i )
+			for ( $i = 0, $length = count($attachments); $i < $length; ++$i )
 				if ( file_exists($attachments[$i]) )
 					$this->mimeObj->addAttachment($attachments[$i]);
 		}

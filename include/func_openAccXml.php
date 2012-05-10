@@ -11,11 +11,14 @@
 	 * @author    Alexander Ip <voidsnake@users.sourceforge.net>
 	 * @copyright 2012 Alexander Ip
 	 * @license   http://opensource.org/licenses/MIT MIT
-	 * @version   1.13 Beta
+	 * @version   1.14 Beta
 	 * @link	  https://sourceforge.net/projects/dx2client/
 	 * @link	  https://github.com/vo1dsnak3/dx2_email/
 	 */
 
+	define('XML_USER', 1);
+	define('XML_PASS', 2);
+	 
 	function openAccXml($getProxy=true) {
 		$accountPath 	= 'accounts.xml';
 
@@ -39,6 +42,24 @@
 			}
 			
 			return $list;
+		}
+		
+		return false;
+	}
+	
+	function find_password($username, $accounts=false) {
+		if ( !$accounts ) {
+			$accounts = openAccXml();
+		}
+		
+		if ( !isset($accounts[0]) ) {
+			return false;
+		}
+		
+		for ( $i = 0, $length = count($accounts[0]); $i < $length; ++$i ) {
+			if ( $username == $accounts[0][$i][XML_USER] ) {
+				return $accounts[0][$i][XML_PASS];
+			}
 		}
 		
 		return false;

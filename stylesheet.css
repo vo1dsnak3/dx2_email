@@ -65,7 +65,7 @@ input, textarea {
 	-moz-box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.3) inset;
 	box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.3) inset;
 	
-	cursor: url(gfx/caret.png), url(gfx/caret.cur), auto;
+	cursor: url(gfx/caret2.png), url(gfx/caret.cur), auto;
 	
 	-moz-box-sizing: 	border-box;
 	-ms-box-sizing: 	border-box;

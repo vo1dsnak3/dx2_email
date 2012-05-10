@@ -2,6 +2,12 @@ Deus Ex Email Client 2
 
 CHANGELOG
 ----------------------------------------------------------------------
+1.14 Beta
+- Fix broken "ajax_setimapflag" since the client has switched over to multiaccount support
+- Prevent user from using relative ".." in file paths
+- Changes to openAccXml.php
+- Fix small mistake with css not finding caret2.png
+
 1.13 Beta
 - Simplified the avatar system
 - Include more specific instructions on using QuickPHP with DX2

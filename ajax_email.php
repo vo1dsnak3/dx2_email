@@ -36,17 +36,6 @@
 	$limit			= ( isset($_GET[OPT_LIMIT]) ? $_GET[OPT_LIMIT] : 0 );
 	$xml_limit		= ( isset($_GET[OPT_XMLLIM]) ? $_GET[OPT_XMLLIM] : 0 );
 	
-	$infoAcc		= openAccXml();
-	$length 		= count($infoAcc[0]);
-	$pass			= '';
-		
-	for ( $i = 0; $i < $length; ++$i ) {
-		if ( DX_USER == $infoAcc[0][$i][1] ) {
-			$pass = $infoAcc[0][$i][2];
-			break;
-		}
-	}
-
 	/*==========================================================================================*/
 	
 	$list   = '';
@@ -54,6 +43,13 @@
 	$data	= array('From'=>'From', 'To'=>'To', 'Avatar'=>DEFAULT_AV, 'Attach'=>false, 'date'=>'');
 	
 	try {
+		// Check password
+		$pass = find_password(DX_USER);
+		
+		if ( $pass === false ) {
+			throw new Exception('Password could not be found for account '.DX_USER);
+		}
+	
 		// Create object depending on whether we are in offline mode
 		$dx_imap = ( !$offline ? new DX_Imap_Online(DX_SERVER, DX_USER, $pass) : new DX_Imap_Offline(DX_USER, $xml_limit) );
 		
