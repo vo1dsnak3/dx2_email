@@ -9,7 +9,7 @@
 	 * @author    Alexander Ip <voidsnake@users.sourceforge.net>
 	 * @copyright 2012 Alexander Ip
 	 * @license   http://opensource.org/licenses/MIT MIT
-	 * @version   1.13 Beta
+	 * @version   1.14 Beta
 	 * @link	  https://sourceforge.net/projects/dx2client/
 	 * @link	  https://github.com/vo1dsnak3/dx2_email/
 	 */
@@ -39,7 +39,7 @@
 	/*==========================================================================================*/
 	
 	$list   = '';
-	$ver	= 'DX2 VISUAL FRAMEWORK 1.13';
+	$ver	= 'DX2 VISUAL FRAMEWORK 1.14';
 	$data	= array('From'=>'From', 'To'=>'To', 'Avatar'=>DEFAULT_AV, 'Attach'=>false, 'date'=>'');
 	
 	try {
@@ -163,5 +163,5 @@ $main = '
 	
 </div>';
 
-echo json_encode(array('main'=>$main, 'list'=>$list, 'body'=>html_entity_decode($data['Body'], ENT_COMPAT | ENT_XML1)));
+echo json_encode(array('main'=>preg_replace('(\r|\n|\t|\s{2,})', '', $main), 'list'=>preg_replace('(\r|\n|\t|\s{2,})', '', $list), 'body'=>preg_replace('(\r|\n|\t|\s{2,})', '', html_entity_decode($data['Body'], ENT_COMPAT | ENT_XML1))));
 ?>

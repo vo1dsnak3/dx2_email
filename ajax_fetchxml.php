@@ -10,7 +10,7 @@
 	 * @author    Alexander Ip <voidsnake@users.sourceforge.net>
 	 * @copyright 2012 Alexander Ip
 	 * @license   http://opensource.org/licenses/MIT MIT
-	 * @version   1.13 Beta
+	 * @version   1.14 Beta
 	 * @link	  https://sourceforge.net/projects/dx2client/
 	 * @link	  https://github.com/vo1dsnak3/dx2_email/
 	 */
@@ -58,7 +58,7 @@
 				$body = nl2br($body);
 			}
 
-			echo json_encode(array('from'=>$from, 'to'=>$to, 'body'=>$body, 'date'=>$date, 'subject'=>$subj, 'avatar'=>$av, 'attype'=>$fn));
+			echo json_encode(array('from'=>$from, 'to'=>$to, 'body'=>preg_replace('(\r|\n|\t|\s{2,})', '', $body), 'date'=>$date, 'subject'=>$subj, 'avatar'=>$av, 'attype'=>$fn));
 		}
 	} else {
 		echo json_encode(array('error'=>'Cannot find: '.$xml_path));
