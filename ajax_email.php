@@ -163,5 +163,9 @@ $main = '
 	
 </div>';
 
-echo json_encode(array('main'=>preg_replace('(\r|\n|\t|\s{2,})', '', $main), 'list'=>preg_replace('(\r|\n|\t|\s{2,})', '', $list), 'body'=>preg_replace('(\r|\n|\t|\s{2,})', '', html_entity_decode($data['Body'], ENT_COMPAT | ENT_XML1))));
+function post_proc($value) {
+	return preg_replace(array('/(\r|\n|\t)/', '/\s{2,}/'), array('', ' '), $value);
+}
+
+echo json_encode(array('main'=>post_proc($main), 'list'=>post_proc($list), 'body'=>post_proc(html_entity_decode($data['Body'], ENT_COMPAT | ENT_XML1))));
 ?>
